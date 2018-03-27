@@ -42,115 +42,88 @@
  */
 #}
 
-{{ attach_library('socialbase/tablesaw') }}
+<div class="table-responsive">
 
-{% if card %}
-    <div class="card">
-    <div class="card-body">
-{% endif %}
+  {%
+    set classes = [
+      'table',
+      'table-hover',
+      'table-striped',
+      sticky ? 'sticky-enabled',
+    ]
+  %}
 
-  {% if theme.settings.table_responsive %}
-
-    <div class="table-responsive">
-  {% endif %}
-  {% set classes = [
-    'table',
-    'tablesaw',
-    context.bordered is not empty or theme.settings.table_bordered ? 'table-bordered',
-    context.condensed is not empty or theme.settings.table_condensed ? 'table-condensed',
-    context.hover is not empty or theme.settings.table_hover ? 'table-hover',
-    context.striped is not empty or theme.settings.table_striped ? 'table-striped',
-  ] %}
-
-    <table{{ attributes.addClass(classes) }} data-tablesaw-mode="swipe" data-tablesaw-minimap>
-      {% if caption %}
-        <caption>{{ caption }}</caption>
-      {% endif %}
-
-      {% for colgroup in colgroups %}
-        {% if colgroup.cols %}
-          <colgroup{{ colgroup.attributes }}>
-            {% for col in colgroup.cols %}
-              <col{{ col.attributes }} />
-            {% endfor %}
-          </colgroup>
-        {% else %}
-          <colgroup{{ colgroup.attributes }} />
-        {% endif %}
-      {% endfor %}
-
-      {% if header %}
-        <thead>
-          <tr>
-            {% for cell in header %}
-            {%
-            set cell_classes = [
-              cell.active_table_sort ? 'active',
-            ]
-            %}
-            {% if loop.first %}
-              <{{ cell.tag }}{{ cell.attributes.addClass(cell_classes).setAttribute('data-tablesaw-priority', 'persist') }}>
-                {{- cell.content -}}
-              </{{ cell.tag }}>
-            {% else %}
-              <{{ cell.tag }}{{ cell.attributes.addClass(cell_classes) }}>
-                {{- cell.content -}}
-              </{{ cell.tag }}>
-            {% endif %}
-          {% endfor %}
-          </tr>
-        </thead>
-      {% endif %}
-
-      {% if rows %}
-        <tbody>
-          {% for row in rows %}
-            {%
-            set row_classes = [
-              not no_striping ? cycle(['odd', 'even'], loop.index0),
-            ]
-            %}
-            <tr{{ row.attributes.addClass(row_classes) }}>
-              {% for cell in row.cells %}
-                {% if loop.first %}
-                  <{{ cell.tag }}{{ cell.attributes.setAttribute('data-tablesaw-priority', 'persist') }}>
-                    {{- cell.content -}}
-                  </{{ cell.tag }}>
-                {% else %}
-                  <{{ cell.tag }}{{ cell.attributes }}>
-                    {{- cell.content -}}
-                  </{{ cell.tag }}>
-                {% endif %}
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      {% elseif empty %}
-        <tbody>
-          <tr class="odd">
-            <td colspan="{{ header_columns }}" class="empty message">{{ empty }}</td>
-          </tr>
-        </tbody>
-      {% endif %}
-      {% if footer %}
-        <tfoot>
-          {% for row in footer %}
-            <tr{{ row.attributes }}>
-              {% for cell in row.cells %}
-                <{{ cell.tag }}{{ cell.attributes }}>
-                  {{- cell.content -}}
-                </{{ cell.tag }}>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tfoot>
-      {% endif %}
-    </table>
-  {% if theme.settings.table_responsive %}
-    </div>
-  {% endif %}
-
-    {% if card %}
-        </div>
-        </div>
+  <table{{ attributes.addClass(classes) }}>
+    {% if caption %}
+      <caption>{{ caption }}</caption>
     {% endif %}
+
+    {% for colgroup in colgroups %}
+      {% if colgroup.cols %}
+        <colgroup{{ colgroup.attributes }}>
+          {% for col in colgroup.cols %}
+            <col{{ col.attributes }} />
+          {% endfor %}
+        </colgroup>
+      {% else %}
+        <colgroup{{ colgroup.attributes }} />
+      {% endif %}
+    {% endfor %}
+
+    {% if header %}
+      <thead>
+        <tr>
+          {% for cell in header %}
+            {%
+              set cell_classes = [
+                cell.active_table_sort ? 'active',
+              ]
+            %}
+           <{{ cell.tag }}{{ cell.attributes.addClass(cell_classes) }}>
+              {{- cell.content -}}
+            </{{ cell.tag }}>
+          {% endfor %}
+        </tr>
+      </thead>
+    {% endif %}
+
+    {% if rows %}
+      <tbody>
+        {% for row in rows %}
+          {%
+          set row_classes = [
+            not no_striping ? cycle(['odd', 'even'], loop.index0),
+          ]
+          %}
+          <tr{{ row.attributes.addClass(row_classes) }}>
+            {% for cell in row.cells %}
+              <{{ cell.tag }}{{ cell.attributes }}>
+                {{- cell.content -}}
+              </{{ cell.tag }}>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    {% elseif empty %}
+      <tbody>
+        <tr class="odd">
+          <td colspan="{{ header_columns }}" class="empty message">{{ empty }}</td>
+        </tr>
+      </tbody>
+    {% endif %}
+    {% if footer %}
+      <tfoot>
+        {% for row in footer %}
+          <tr{{ row.attributes }}>
+            {% for cell in row.cells %}
+              <{{ cell.tag }}{{ cell.attributes }}>
+                {{- cell.content -}}
+              </{{ cell.tag }}>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tfoot>
+    {% endif %}
+  </table>
+
+</div>

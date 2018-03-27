@@ -20,16 +20,16 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     /** @var \Symfony\Component\Routing\Route $route */
     if ($redirect_comment_to_entity === TRUE && $route = $collection->get('entity.comment.canonical')) {
-      $route->setDefaults(array(
+      $route->setDefaults([
         '_controller' => '\Drupal\social_comment\Controller\SocialCommentController::commentPermalink',
-      ));
+      ]);
     }
 
     // Override default title for comment reply page.
     // @TODO: For some reason this doesn't work.
     if ($route = $collection->get('comment.reply')) {
       $defaults = $route->getDefaults();
-      $defaults['_title'] = 'Add new reply';
+      $defaults['_title'] = t('Add new reply')->render();
       $route->setDefaults($defaults);
     }
 

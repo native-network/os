@@ -5,15 +5,10 @@
 /.bundle
 
 # Ignore the build directory
-/build
-/dist
-lib
 .publish/
 
 # Applications & Tools
 .idea
-bower_components
-config.codekit
 node_modules
 npm-debug.log
 **/*.log
@@ -24,5 +19,3 @@ npm-debug.log
 *.sass-cache*
 **/sass/*.css
 *.css.map
-
-deploy_config.json

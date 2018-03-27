@@ -1,4 +1,4 @@
-{% extends "input.html.twig" %}
+
 {#
 /**
  * @file
@@ -14,19 +14,39 @@
  * - suffix: Markup to display after the input element.
  * - type: The type of input.
  *
+ * @ingroup templates
+ *
  * @see \Drupal\bootstrap\Plugin\Preprocess\Input
  * @see template_preprocess_input()
- *
- * @ingroup templates
  */
 #}
+{%
+  set classes = [
+    'form-control',
+  ]
+%}
+
 {% spaceless %}
-  {%
-    set classes = [
-      'form-control',
-    ]
-  %}
+  {% if input_group %}
+    {{ attach_library('socialbase/form--input-groups') }}
+
+    <div class="input-group">
+  {% endif %}
+
+  {% if prefix %}
+    {{ prefix }}
+  {% endif %}
+
   {% block input %}
     <input{{ attributes.addClass(classes) }} />
   {% endblock %}
+
+  {% if suffix %}
+    {{ suffix }}
+  {% endif %}
+
+  {% if input_group %}
+    </div>
+  {% endif %}
+
 {% endspaceless %}

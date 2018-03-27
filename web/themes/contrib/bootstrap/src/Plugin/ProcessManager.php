@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\bootstrap\Plugin\ProcessManager.
- */
 
 namespace Drupal\bootstrap\Plugin;
 
@@ -70,13 +66,6 @@ class ProcessManager extends PluginManager {
       $e->addClass('form-inline', 'wrapper_attributes');
     }
 
-    // Check for errors and set the "has_error" property flag.
-    $errors = $e->getError();
-    $e->setProperty('errors', $errors);
-    if (isset($errors) || ($e->getProperty('required') && $theme->getSetting('forms_required_has_error'))) {
-      $e->setProperty('has_error', TRUE);
-    }
-
     // Process input groups.
     if ($e->getProperty('input') && ($e->getProperty('input_group') || $e->getProperty('input_group_button'))) {
       static::processInputGroups($e, $form_state, $complete_form);
@@ -99,7 +88,8 @@ class ProcessManager extends PluginManager {
     $ajax = $element->getProperty('ajax');
 
     // Show throbber AJAX requests in an input button group.
-    if (!isset($ajax['progress']['type']) || $ajax['progress']['type'] === 'throbber') {
+    $ignore_types = ['checkbox', 'checkboxes', 'hidden', 'radio', 'radios'];
+    if ((!isset($ajax['progress']['type']) || $ajax['progress']['type'] === 'throbber') && !$element->isType($ignore_types)) {
       // Use an icon for autocomplete "throbber".
       $icon = Bootstrap::glyphicon('refresh');
       $element->appendProperty('field_suffix', Element::create($icon)->addClass(['ajax-progress', 'ajax-progress-throbber']));
@@ -132,8 +122,9 @@ class ProcessManager extends PluginManager {
 
       // Find the closest button.
       if ($button = self::findButton($parent)) {
-        $element->appendProperty('field_suffix', $button->setIcon());
-        $button->setProperty('access', FALSE);
+        // Since this button is technically being "moved", it needs to be
+        // rendered now, so it doesn't get printed twice (in the original spot).
+        $element->appendProperty('field_suffix', $button->setIcon()->render());
       }
     }
 
@@ -143,7 +134,7 @@ class ProcessManager extends PluginManager {
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#attributes' => $input_group_attributes,
-        '#value' => Element::create($prefix)->render(),
+        '#value' => Element::create($prefix)->renderPlain(),
         '#weight' => -1,
       ]);
     }
@@ -152,7 +143,7 @@ class ProcessManager extends PluginManager {
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#attributes' => $input_group_attributes,
-        '#value' => Element::create($suffix)->render(),
+        '#value' => Element::create($suffix)->renderPlain(),
         '#weight' => 1,
       ]);
     }
@@ -164,7 +155,7 @@ class ProcessManager extends PluginManager {
    * @param \Drupal\bootstrap\Utility\Element $element
    *   The element to iterate over.
    *
-   * @return \Drupal\bootstrap\Utility\Element|FALSE
+   * @return \Drupal\bootstrap\Utility\Element|false
    *   The first button element or FALSE if no button could be found.
    */
   protected static function &findButton(Element $element) {

@@ -23,6 +23,8 @@ use Drupal\Core\Session\AccountInterface;
  *   description = @Translation("Adds users to groups as members."),
  *   entity_type_id = "user",
  *   pretty_path_key = "member",
+ *   reference_label = @Translation("Username"),
+ *   reference_description = @Translation("The name of the user you want to make a member"),
  *   enforced = TRUE
  * )
  */
@@ -58,16 +60,17 @@ class GroupMembership extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function getPermissions() {
+  protected function getGroupContentPermissions() {
+    $permissions = parent::getGroupContentPermissions();
+
+    // Add extra permissions specific to membership group content entities.
     $permissions['administer members'] = [
       'title' => 'Administer group members',
-      'description' => 'Administer the group members',
       'restrict access' => TRUE,
     ];
 
     $permissions['join group'] = [
       'title' => 'Join group',
-      'description' => 'Join a group by filling out the configured fields',
       'allowed for' => ['outsider'],
     ];
 
@@ -78,15 +81,14 @@ class GroupMembership extends GroupContentEnablerBase {
 
     // Update the labels of the default permissions.
     $permissions['view group_membership content']['title'] = 'View individual group members';
-    $permissions['edit own group_membership content'] = [
-      'title' => 'Edit own membership',
-      'allowed for' => ['member'],
-    ];
+    $permissions['update own group_membership content']['title'] = 'Edit own membership';
 
-    // These are handled by 'administer members' or 'leave group'.
-    unset($permissions['access group_membership overview']);
+    // Only members can update their membership.
+    $permissions['update own group_membership content']['allowed for'] = ['member'];
+
+    // These are handled by 'administer members', 'join group' or 'leave group'.
     unset($permissions['create group_membership content']);
-    unset($permissions['edit any group_membership content']);
+    unset($permissions['update any group_membership content']);
     unset($permissions['delete any group_membership content']);
     unset($permissions['delete own group_membership content']);
 
@@ -117,7 +119,7 @@ class GroupMembership extends GroupContentEnablerBase {
 
     // Allow members to edit their own membership data.
     if ($group_content->entity_id->entity->id() == $account->id()) {
-      $permissions = ['edit own group_membership content', 'administer members'];
+      $permissions = ['update own group_membership content', 'administer members'];
       return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, $permissions, 'OR');
     }
 
@@ -145,60 +147,63 @@ class GroupMembership extends GroupContentEnablerBase {
    * {@inheritdoc}
    */
   public function postInstall() {
-    $group_content_type_id = $this->getContentTypeConfigId();
+    // Only create config objects while config import is not in progress.
+    if (!\Drupal::isConfigSyncing()) {
+      $group_content_type_id = $this->getContentTypeConfigId();
 
-    // Add the group_roles field to the newly added group content type. The
-    // field storage for this is defined in the config/install folder. The
-    // default handler for 'group_role' target entities in the 'group_type'
-    // handler group is GroupTypeRoleSelection.
-    FieldConfig::create([
-      'field_storage' => FieldStorageConfig::loadByName('group_content', 'group_roles'),
-      'bundle' => $group_content_type_id,
-      'label' => $this->t('Roles'),
-      'settings' => [
-        'handler' => 'group_type:group_role',
-        'handler_settings' => [
-          'group_type_id' => $this->getGroupTypeId(),
+      // Add the group_roles field to the newly added group content type. The
+      // field storage for this is defined in the config/install folder. The
+      // default handler for 'group_role' target entities in the 'group_type'
+      // handler group is GroupTypeRoleSelection.
+      FieldConfig::create([
+        'field_storage' => FieldStorageConfig::loadByName('group_content', 'group_roles'),
+        'bundle' => $group_content_type_id,
+        'label' => $this->t('Roles'),
+        'settings' => [
+          'handler' => 'group_type:group_role',
+          'handler_settings' => [
+            'group_type_id' => $this->getGroupTypeId(),
+          ],
         ],
-      ],
-    ])->save();
+      ])->save();
 
-    // Build the 'default' display ID for both the entity form and view mode.
-    $default_display_id = "group_content.$group_content_type_id.default";
+      // Build the 'default' display ID for both the entity form and view mode.
+      $default_display_id = "group_content.$group_content_type_id.default";
 
-    // Build or retrieve the 'default' form mode.
-    if (!$form_display = EntityFormDisplay::load($default_display_id)) {
-      $form_display = EntityFormDisplay::create([
-        'targetEntityType' => 'group_content',
-        'bundle' => $group_content_type_id,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
+      // Build or retrieve the 'default' form mode.
+      if (!$form_display = EntityFormDisplay::load($default_display_id)) {
+        $form_display = EntityFormDisplay::create([
+          'targetEntityType' => 'group_content',
+          'bundle' => $group_content_type_id,
+          'mode' => 'default',
+          'status' => TRUE,
+        ]);
+      }
+
+      // Build or retrieve the 'default' view mode.
+      if (!$view_display = EntityViewDisplay::load($default_display_id)) {
+        $view_display = EntityViewDisplay::create([
+          'targetEntityType' => 'group_content',
+          'bundle' => $group_content_type_id,
+          'mode' => 'default',
+          'status' => TRUE,
+        ]);
+      }
+
+      // Assign widget settings for the 'default' form mode.
+      $form_display->setComponent('group_roles', [
+        'type' => 'options_buttons',
+      ])->save();
+
+      // Assign display settings for the 'default' view mode.
+      $view_display->setComponent('group_roles', [
+        'label' => 'above',
+        'type' => 'entity_reference_label',
+        'settings' => [
+          'link' => 0,
+        ],
+      ])->save();
     }
-
-    // Build or retrieve the 'default' view mode.
-    if (!$view_display = EntityViewDisplay::load($default_display_id)) {
-      $view_display = EntityViewDisplay::create([
-        'targetEntityType' => 'group_content',
-        'bundle' => $group_content_type_id,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
-
-    // Assign widget settings for the 'default' form mode.
-    $form_display->setComponent('group_roles', [
-      'type' => 'options_buttons',
-    ])->save();
-
-    // Assign display settings for the 'default' view mode.
-    $view_display->setComponent('group_roles', [
-      'label' => 'above',
-      'type' => 'entity_reference_label',
-      'settings' => [
-        'link' => 0,
-      ],
-    ])->save();
   }
 
   /**
@@ -207,10 +212,6 @@ class GroupMembership extends GroupContentEnablerBase {
   public function defaultConfiguration() {
     $config = parent::defaultConfiguration();
     $config['entity_cardinality'] = 1;
-
-    // This string will be saved as part of the group type config entity. We do
-    // not use a t() function here as it needs to be stored untranslated.
-    $config['info_text']['value'] = '<p>By submitting this form you will become a member of the group.<br />Please fill out any available fields to complete your membership information.</p>';
     return $config;
   }
 
@@ -228,13 +229,6 @@ class GroupMembership extends GroupContentEnablerBase {
     $form['entity_cardinality']['#description'] .= '<br /><em>' . $info . '</em>';
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
-    return ['module' => ['user']];
   }
 
 }

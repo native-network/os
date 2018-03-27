@@ -35,12 +35,13 @@ libraries-extend:
     - bootstrap/drupal.states
   core/drupal.tabledrag:
     - bootstrap/drupal.tabledrag
+  image_widget_crop/cropper.integration:
+    - bootstrap/image_widget_crop
   views/views.ajax:
     - bootstrap/views.ajax
 
 libraries-override:
   core/drupal.batch: bootstrap/drupal.batch
-  core/drupal.collapse: false
   core/drupal.dropbutton: bootstrap/dropdown
   core/drupal.vertical-tabs: bootstrap/drupal.vertical-tabs
   filter/drupal.filter: bootstrap/drupal.filter
@@ -78,8 +79,8 @@ libraries-override:
 #  core/drupal.dialog: bootstrap/drupal.dialog
 #  core/drupal.dialog.ajax: bootstrap/drupal.dialog.ajax
 
-# Information added by Drupal.org packaging script on 2016-08-03
-version: '8.x-3.0-rc2'
+# Information added by Drupal.org packaging script on 2018-01-20
+version: '8.x-3.9'
 core: '8.x'
 project: 'bootstrap'
-datestamp: 1470203963
+datestamp: 1516430290

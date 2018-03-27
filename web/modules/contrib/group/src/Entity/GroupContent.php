@@ -2,13 +2,13 @@
 
 namespace Drupal\group\Entity;
 
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\user\UserInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the Group content entity.
@@ -57,6 +57,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "add-page" = "/group/{group}/content/add",
  *     "canonical" = "/group/{group}/content/{group_content}",
  *     "collection" = "/group/{group}/content",
+ *     "create-form" = "/group/{group}/content/create/{plugin_id}",
+ *     "create-page" = "/group/{group}/content/create",
  *     "delete-form" = "/group/{group}/content/{group_content}/delete",
  *     "edit-form" = "/group/{group}/content/{group_content}/edit"
  *   },
@@ -104,34 +106,18 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
    * {@inheritdoc}
    */
   public static function loadByContentPluginId($plugin_id) {
-    $group_content_types = GroupContentType::loadByContentPluginId($plugin_id);
-
-    if (empty($group_content_types)) {
-      return [];
-    }
-
-    return \Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->loadByProperties(['type' => array_keys($group_content_types)]);
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
+    return $storage->loadByContentPluginId($plugin_id);
   }
 
   /**
    * {@inheritdoc}
    */
   public static function loadByEntity(ContentEntityInterface $entity) {
-    $group_content_types = GroupContentType::loadByEntityTypeId($entity->getEntityTypeId());
-
-    // If no responsible group content types were found, we return nothing.
-    if (empty($group_content_types)) {
-      return [];
-    }
-
-    return \Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->loadByProperties([
-        'type' => array_keys($group_content_types),
-        'entity_id' => $entity->id(),
-      ]);
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
+    return $storage->loadByEntity($entity);
   }
 
   /**
@@ -147,6 +133,10 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
   protected function urlRouteParameters($rel) {
     $uri_route_parameters = parent::urlRouteParameters($rel);
     $uri_route_parameters['group'] = $this->getGroup()->id();
+    // These routes depend on the plugin ID.
+    if (in_array($rel, ['add-form', 'create-form'])) {
+      $uri_route_parameters['plugin_id'] = $this->getContentPlugin()->getPluginId();
+    }
     return $uri_route_parameters;
   }
 
@@ -202,6 +192,71 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
 
     // Set the label so the DB also reflects it.
     $this->set('label', $this->label());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    // For memberships, we generally need to rebuild the group role cache for
+    // the member's user account in the target group.
+    $rebuild_group_role_cache = $this->getContentPlugin()->getPluginId() == 'group_membership';
+
+    if ($update === FALSE) {
+      // We want to make sure that the entity we just added to the group behaves
+      // as a grouped entity. This means we may need to update access records,
+      // flush some caches containing the entity or perform other operations we
+      // cannot possibly know about. Lucky for us, all of that behavior usually
+      // happens when saving an entity so let's re-save the added entity.
+      $this->getEntity()->save();
+    }
+
+    // If a membership gets updated, but the member's roles haven't changed, we
+    // do not need to rebuild the group role cache for the member's account.
+    elseif ($rebuild_group_role_cache) {
+      $new = array_column($this->group_roles->getValue(), 'target_id');
+      $old = array_column($this->original->group_roles->getValue(), 'target_id');
+      sort($new);
+      sort($old);
+      $rebuild_group_role_cache = ($new != $old);
+    }
+
+    if ($rebuild_group_role_cache) {
+      /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
+      $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
+      $role_storage->resetUserGroupRoleCache($this->getEntity(), $this->getGroup());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    /** @var GroupContentInterface[] $entities */
+    foreach ($entities as $group_content) {
+      if ($entity = $group_content->getEntity()) {
+        // For the same reasons we re-save entities that are added to a group,
+        // we need to re-save entities that were removed from one. See
+        // ::postSave(). We only save the entity if it still exists to avoid
+        // trying to save an entity that just got deleted and triggered the
+        // deletion of its group content entities.
+        // @todo Revisit when https://www.drupal.org/node/2754399 lands.
+        $entity->save();
+
+        // If a membership gets deleted, we need to reset the internal group
+        // roles cache for the member in that group, but only if the user still
+        // exists. Otherwise, it doesn't matter as the user ID will become void.
+        if ($group_content->getContentPlugin()->getPluginId() == 'group_membership') {
+          /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
+          $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
+          $role_storage->resetUserGroupRoleCache($group_content->getEntity(), $group_content->getGroup());
+        }
+      }
+    }
   }
 
   /**
@@ -265,6 +320,18 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
       ->setDescription(t('The time that the group content was last edited.'))
       ->setTranslatable(TRUE);
 
+    if (\Drupal::moduleHandler()->moduleExists('path')) {
+      $fields['path'] = BaseFieldDefinition::create('path')
+        ->setLabel(t('URL alias'))
+        ->setTranslatable(TRUE)
+        ->setDisplayOptions('form', [
+          'type' => 'path',
+          'weight' => 30,
+        ])
+        ->setDisplayConfigurable('form', TRUE)
+        ->setComputed(TRUE);
+    }
+
     return $fields;
   }
 
@@ -298,8 +365,8 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
       // up until now. This is a bug in core because we can't simply unset those
       // two properties, see: https://www.drupal.org/node/2346329
       $fields['entity_id'] = BaseFieldDefinition::create('entity_reference')
-        ->setLabel($original->getLabel())
-        ->setDescription($original->getDescription())
+        ->setLabel($plugin->getEntityReferenceLabel() ?: $original->getLabel())
+        ->setDescription($plugin->getEntityReferenceDescription() ?: $original->getDescription())
         ->setConstraints($original->getConstraints())
         ->setDisplayOptions('view', $original->getDisplayOptions('view'))
         ->setDisplayOptions('form', $original->getDisplayOptions('form'))

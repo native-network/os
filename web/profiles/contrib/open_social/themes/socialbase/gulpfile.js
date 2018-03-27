@@ -1,46 +1,60 @@
 'use strict';
 
 // ===================================================
-// Global packages
+// Load Gulp plugins
 // ===================================================
 
-var gulp          = require('gulp');
+var importOnce    = require('node-sass-import-once'),
+    notify        = require("gulp-notify"),
+    gulp          = require('gulp'),
+    $             = require('gulp-load-plugins')(),
+    browserSync   = require('browser-sync').create(),
+    del           = require('del'),
+    // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
+    sass          = require('gulp-sass'),
+    autoprefixer  = require('autoprefixer'),
+    mqpacker      = require('css-mqpacker');
 
-// Global configuration
-var config        = require('./gulp_config.json');
+var options = {};
 
-// ===================================================
-// Initialize files
-// ===================================================
+options.basetheme = {
+  root       : __dirname,
+  components : __dirname + '/components/',
+  build      : __dirname + '/assets/',
+  css        : __dirname + '/assets/css/',
+  js         : __dirname + '/assets/js/'
+};
 
-// Run this one time when you install the project so you have all files in the dist folder
-gulp.task('init', ['images', 'content', 'font', 'bootstrap-js', 'bootstrap-sass', 'scripts']);
-
-
-gulp.task('bootstrap-sass', function() {
-  return gulp.src(config.bootstrap + 'stylesheets/bootstrap/' + '**/*.scss' )
-    .pipe( gulp.dest(config.components + '/contrib/bootstrap') );
-});
-
-gulp.task('bootstrap-js', function() {
-  return gulp.src(config.bootstrap + 'javascripts/bootstrap/*.js')
-    .pipe( gulp.dest(config.js + '/contrib/bootstrap') );
-});
-
-
-
-// ===================================================
-// Styleguide
-// ===================================================
-
-var pug           = require('gulp-pug'),
-    connect       = require('gulp-connect'),
-    concat        = require('gulp-concat'),
-    notify        = require('gulp-notify'),
-    path          = require('path'),
-    plumber       = require('gulp-plumber');
+options.icons = {
+  src   : options.basetheme.components + '06-libraries/icons/source/',
+  dest  : options.basetheme.build + 'icons/'
+};
 
 
+// Set the URL used to access the Drupal website under development. This will
+// allow Browser Sync to serve the website and update CSS changes on the fly.
+options.drupalURL = '';
+// options.drupalURL = 'http://social.dev';
+
+// Define the node-sass configuration. The includePaths is critical!
+options.sass = {
+  importer: importOnce,
+  includePaths: [
+    options.basetheme.components
+  ],
+  outputStyle: 'expanded'
+};
+
+var sassFiles = [
+  options.basetheme.components + '**/*.scss',
+  // Do not open Sass partials as they will be included as needed.
+  '!' + options.basetheme.components + '**/_*.scss'
+];
+
+var sassProcessors = [
+  autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
+  mqpacker({sort: true})
+];
 
 var onError = function(err) {
   notify.onError({
@@ -51,246 +65,182 @@ var onError = function(err) {
   this.emit('end');
 };
 
-gulp.task('styleguide', function() {
-  return gulp.src(config.patterns + '**/*.pug')
-  .pipe(plumber({ handleError: onError }))
-  .pipe(pug({ pretty: true })) // pipe to pug plugin
-  .pipe(gulp.dest(config.dist)) // tell gulp our output folder
-});
 
-gulp.task('watch:styleguide', ['styleguide'], function () {
-  return gulp.watch(config.patterns + '**/*', ['styleguide'] );
-});
-
-// ===================================================
-// Scripts
+// #################
+//
+// Compile the Sass
+//
+// #################
+//
+// This task will look for all scss files and run postcss and rucksack.
+// For performance review we will display the file sizes
+// Then the files will be stored in the assets folder
+// At the end we check if we should inject new styles in the browser
 // ===================================================
 
-//copy drupal scripts from drupal to make them available for the styleguide
-gulp.task('scripts-drupal', function() {
-  return gulp.src([
-    config.drupal + 'assets/vendor/domready/ready.min.js',
-    config.drupal + 'assets/vendor/jquery/jquery.min.js',
-    config.drupal + 'assets/vendor/jquery-once/jquery.once.min.js',
-    config.drupal + '/misc/drupalSettingsLoader.js',
-    config.drupal + '/misc/drupal.js',
-    config.drupal + '/misc/debounce.js',
-    config.drupal + '/misc/forms.js',
-    config.drupal + '/misc/tabledrag.js',
-    config.drupal + '/modules/user/user.js',
-    config.drupal + '/modules/file/file.js'
-  ])
-  .pipe( concat('drupal-core.js') )
-  .pipe( gulp.dest(config.dist + '/js') );
-});
-
-//copy scripts to dist
-gulp.task('scripts', function() {
-  return gulp.src(config.js + '/**/*')
-  .pipe( gulp.dest(config.dist + '/js') );
-});
-
-gulp.task('watch:js', ['scripts', 'scripts-drupal'],  function () {
-  return gulp.watch([config.js + '**/*.js', config.components + '**/*.js'], ['scripts', 'scripts-drupal'] );
-});
-
-// ===================================================
-// Copy assets to dist folder
-// ===================================================
-
-gulp.task('images', function() {
-  return gulp.src(config.images + '**/*')
-  .pipe( gulp.dest(config.dist + 'images') );
-});
-
-gulp.task('watch:images', function () {
-  return gulp.watch(config.images + '**/*', ['images'] );
-});
-
-gulp.task('content', function() {
-  return gulp.src(config.content + '**/*')
-  .pipe( gulp.dest(config.dist + 'content') );
-});
-
-gulp.task('watch:content', ['content'], function () {
-  return gulp.watch(config.content + '**/*', ['content']);
-});
-
-gulp.task('font', function() {
-  return gulp.src(config.font + '**/*')
-  .pipe( gulp.dest(config.dist + 'font') );
-});
-
-gulp.task('watch:font', ['font'], function () {
-  return gulp.watch(config.font + '**/*', ['font']);
-});
-
-
-// ===================================================
-// Set up a server
-// ===================================================
-
-gulp.task('connect', function() {
-  connect.server({
-    root: [config.dist],
-    livereload: false,
-    port: 5000
-  });
-});
-
-
-// ===================================================
-// Build CSS.
-// ===================================================
-
-var postcss       = require('gulp-postcss'),
-    sass          = require('gulp-sass'),
-    sourcemaps    = require('gulp-sourcemaps'),
-    autoprefixer  = require('autoprefixer'),
-    mqpacker      = require('css-mqpacker'),
-    rucksack      = require('gulp-rucksack'),
-    importOnce    = require('node-sass-import-once'),
-    notify        = require('gulp-notify'),
-    rename        = require('gulp-rename'),
-    path          = require('path'),
-    plumber       = require('gulp-plumber');
-
-var options       = {};
-
-// Define the node-sass configuration. The includePaths is critical!
-options.sass = {
-  importer: importOnce,
-  includePaths: [
-    config.components
-  ],
-  outputStyle: 'expanded'
-};
-
-var sassFiles = [
-  config.components + '**/*.scss',
-  // Do not open Sass partials as they will be included as needed.
-  '!' + config.components + '**/_*.scss'
-];
-
-var sassProcessors = [
-  autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
-  mqpacker({sort: true})
-];
-
-gulp.task('styles', function () {
+gulp.task('styles', ['clean:css'], function () {
   return gulp.src(sassFiles)
-    .pipe( sourcemaps.init() )
-    .pipe( plumber({ errorHandler: onError }) )
-    .pipe( sass(options.sass) )
-    .pipe( postcss(sassProcessors) )
-    .pipe( rucksack() )
-    .pipe( rename({dirname: ''}))
-    .pipe( sourcemaps.write('.') )
-    .pipe( gulp.dest(config.css) )
-    .pipe( gulp.dest(config.dist + '/css/components/asset-builds') );
-});
-
-gulp.task('watch:styles', ['styles'], function () {
-  return gulp.watch(config.components + '**/*.scss', ['styles']);
+    .pipe($.sass(options.sass).on('error', sass.logError))
+    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe($.postcss(sassProcessors) )
+    .pipe($.rename({dirname: ''}))
+    .pipe($.size({showFiles: true}))
+    .pipe(gulp.dest(options.basetheme.css))
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
 
+// #################
+//
+// Compile the Javascript
+//
+// #################
+//
+// This task will look for all js files, minifies theme
+// and puts them in assets folder. When browsersync is enabled
+// the browser will fetch the changes.
 // ===================================================
-// Icons
-// svgmin minifies our SVG files and strips out unnecessary code that you might inherit from your graphics editor. svgstore binds them together in one giant SVG container called icons.svg. Then cheerio gives us the ability to interact with the DOM components in this file in a jQuery-like way. cheerio in this case is removing any fill attributes from the SVG elements (you’ll want to use CSS to manipulate them) and adds a class of .hide to our parent SVG. It gets deposited into our inc directory with the rest of the HTML partials.
+
+gulp.task('scripts', ['clean:js'], function () {
+  return gulp.src(options.basetheme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest(options.basetheme.js))
+    .pipe(browserSync.reload({stream:true}));
+});
+
+
+// #################
+//
+// Sprite icons
+//
+// #################
+//
+// svgmin minifies our SVG files and strips out unnecessary
+// code that you might inherit from your graphics editor.
+// svgstore binds them together in one giant SVG container called
+// icons.svg. Then cheerio gives us the ability to interact with
+// the DOM components in this file in a jQuery-like way. cheerio
+// in this case is removing any fill attributes from the SVG
+// elements (you’ll want to use CSS to manipulate them)
+// and adds a class of .hide to our parent SVG. It gets
+// deposited into our inc directory with the rest of the HTML partials.
 // ===================================================
 
 var svgmin        = require('gulp-svgmin'),
     svgstore      = require('gulp-svgstore'),
     cheerio       = require('gulp-cheerio');
 
-
-gulp.task('icons', function () {
-  return gulp.src(config.icons + '*.svg')
+gulp.task('sprite-icons', function () {
+  return gulp.src(options.icons.src + '*.svg')
     .pipe(svgmin())
-    .pipe(svgstore({ fileName: 'icons.svg', inlineSvg: true}))
+    .pipe(svgstore({inlineSvg: true}))
+    .pipe($.rename('icons.svg') )
     .pipe(cheerio({
       run: function ($, file) {
         $('svg').addClass('hide');
       },
       parserOptions: { xmlMode: true }
     }))
-    .pipe(gulp.dest(config.images))
+    .pipe(gulp.dest(options.icons.dest))
 });
+
+
+
+// #################
+//
+// Image icons
+//
+// #################
+//
+// Besides the sprite we sometimes still need the individual svg files
+// to load as a css background image. This task optimises and copies
+// the icons to the assets folder.
+// ===================================================
+
+gulp.task('image-icons', function () {
+  return gulp.src(options.icons.src + '*.svg')
+    .pipe(svgmin())
+    .pipe(gulp.dest(options.basetheme.build + 'images/icons/'))
+});
+
+// #################
+//
+// Image mime icons
+//
+// #################
+//
+// Copy the mime icons from the components folder to the assets folder (manual task)
+// ===================================================
+
+gulp.task('mime-image-icons', function () {
+  return gulp.src(options.icons.src + 'mime-icons/*.png')
+    .pipe(gulp.dest(options.basetheme.build + 'images/mime-icons/'))
+});
+
+
+
+// ##############################
+//
+// Watch for changes and rebuild.
+//
+// ##############################
+
+gulp.task('watch', ['watch:css', 'watch:js', 'watch:icons'], function () {
+  if (!options.drupalURL) {
+    return Promise.resolve();
+  }
+  return browserSync.init({
+    proxy: options.drupalURL,
+    open: false
+  });
+});
+
+gulp.task('watch:css', ['styles'], function () {
+  return gulp.watch(options.basetheme.components + '**/*.scss', ['styles']);
+});
+
+
+gulp.task('watch:js', ['scripts'], function () {
+  return gulp.watch(options.basetheme.components + '**/*.js', ['scripts']);
+});
+
 
 gulp.task('watch:icons', function () {
-  return gulp.watch(config.icons + '**/*.svg', ['icons'] );
+  return gulp.watch(options.icons.src + '**/*.svg', ['sprite-icons', 'image-icons'] );
 });
 
 
 
-// ===================================================
-// Deploy
-// ===================================================
+// ######################
+//
+// Clean all directories.
+//
+// ######################
 
-var rsync         = require('gulp-rsync'),
-    prompt        = require('gulp-prompt'),
-    gutil         = require('gulp-util'),
-    gulpif        = require('gulp-if'),
-    argv          = require('minimist')(process.argv);
-
-  try {
-    var deploy    = require('./deploy_config.json');
-  } catch(error) {
-    console.log('Deploy config file missing');
-  }
-
-
-// Generate an error for deploy if something goes wrong
-function throwError(taskName, msg) {
-  throw new gutil.PluginError({
-    plugin: taskName,
-    message: msg
-  });
-}
-
-gulp.task('build', ['styles', 'styleguide' , 'scripts', 'font', 'images', 'content']);
-
-gulp.task('deploy', ['build'], function() {
-  // Dirs and Files to sync
-
-  // Default options for rsync
-  var rsyncConf = {
-    progress: true,
-    incremental: true,
-    relative: true,
-    emptyDirectories: true,
-    recursive: true,
-    clean: true,
-    exclude: [],
-  };
-
-  if (argv.production) {
-    rsyncConf.hostname = deploy.hostname; // hostname
-    rsyncConf.username = deploy.username; // ssh username
-    rsyncConf.destination = deploy.destination; // path where uploaded files go
-    rsyncConf.root = 'dist/';
-  // Missing/Invalid Target
-  } else {
-    throwError('deploy', gutil.colors.red('Missing or invalid target'));
-  }
-
-  // Use gulp-rsync to sync the files
-  return gulp.src(config.dist + '/**/*')
-  .pipe(gulpif(
-      argv.production,
-      prompt.confirm({
-        message: 'Heads Up! Are you SURE you want to push to PRODUCTION?',
-        default: false
-      })
-  ))
-  .pipe(rsync(rsyncConf));
-
+// Clean CSS files.
+gulp.task('clean:css', function () {
+  return del([
+    options.basetheme.css + '**/*.css',
+    options.basetheme.css + '**/*.map'
+  ], {force: true});
 });
 
-// ===================================================
-// Watch and rebuild tasks
-// ===================================================
+// Clean JS files.
+gulp.task('clean:js', function () {
+  return del([
+    options.basetheme.js + '**/*.js'
+  ], {force: true});
+});
 
-gulp.task('default', ['watch:styles', 'watch:styleguide', 'watch:content', 'watch:js', 'watch:icons', 'watch:images', 'connect']);
+// ######################
+//
+// Default task (no watching)
+//
+// ######################
+
+gulp.task('default', ['styles', 'image-icons', 'sprite-icons', 'scripts']);

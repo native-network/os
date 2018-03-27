@@ -46,15 +46,4 @@
  */
 #}
 
-<div{{ attributes.addClass('cover') }}>
-  {{ title_prefix }}
-  {% if label %}
-    <h1{{ title_attributes.addClass('page-title h2') }}>{{ label }}</h1>
-    <br />
-  {% endif %}
-  {{ title_suffix }}
-
-  {% block content %}
-    {{ content }}
-  {% endblock %}
-</div>
+{{ content }}

@@ -5,6 +5,7 @@ namespace Drupal\social_core\Plugin\Block;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
+use Drupal\Core\Url;
 
 /**
  * Provides a 'SocialPageTitleBlock' block.
@@ -23,6 +24,8 @@ class SocialPageTitleBlock extends PageTitleBlock {
     // Take the raw parameter. We'll load it ourselves.
     $nid = \Drupal::routeMatch()->getRawParameter('node');
     $node = FALSE;
+    $current_url = Url::fromRoute('<current>');
+    $current_path = $current_url->toString();
 
     // At this point the parameter could also be a simple string of a nid.
     // EG: on: /node/%node/enrollments.
@@ -31,83 +34,61 @@ class SocialPageTitleBlock extends PageTitleBlock {
     }
 
     if ($node) {
-      $node_type = $node->getType();
-      $title = $node->getTitle();
-      $author = $node->getOwner();
-      $author_name = $author->link();
-      $group_link = NULL;
-      $created_date = $node->getCreatedTime();
+      $translation = \Drupal::service('entity.repository')->getTranslationFromContext($node);
 
-      switch ($node_type) {
-        case 'topic':
-          $topic_type = $node->get('field_topic_type');
-          $hero_node = NULL;
-          $group_link = $this->getGroupLink($node);
-          break;
-
-        case 'event':
-          // @todo make link to events overview.
-          $topic_type = NULL;
-          $hero_node = node_view($node, 'hero');
-          $group_link = $this->getGroupLink($node);
-          break;
-
-        case 'page':
-        case 'book':
-          $topic_type = NULL;
-          $hero_node = NULL;
-          $author_name = NULL;
-
-          break;
-
-        default:
-          $topic_type = NULL;
-          $hero_node = NULL;
+      if (!empty($translation)) {
+        $node->setTitle($translation->getTitle());
       }
 
-      return [
-        '#theme' => 'page_hero_data',
-        '#title' => $title,
-        '#author_name' => $author_name,
-        '#created_date' => $created_date,
-        '#topic_type' => $topic_type,
-        '#group_link' => $group_link,
-        '#hero_node' => $hero_node,
-        '#node' => $node,
-        '#node_type' => $node_type,
-        '#section_class' => 'page-title',
+      $paths_to_exclude = [
+        'edit',
+        'add',
+        'delete',
       ];
+
+      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
+
+      if (!$in_path) {
+
+        $title = $node->getTitle();
+
+        return [
+          '#theme' => 'page_hero_data',
+          '#title' => $title,
+          '#node' => $node,
+          '#section_class' => 'page-title',
+        ];
+
+      }
+      else {
+
+        return [
+          '#type' => 'page_title',
+          '#title' => $this->title,
+        ];
+
+      }
+
     }
     else {
+
       $request = \Drupal::request();
 
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = \Drupal::service('title_resolver')->getTitle($request, $route);
+        return [
+          '#type' => 'page_title',
+          '#title' => $title,
+        ];
       }
-      return [
-        '#type' => 'page_title',
-        '#title' => $title,
-      ];
-    }
-  }
+      else {
+        return [
+          '#type' => 'page_title',
+          '#title' => '',
+        ];
+      }
 
-  /**
-   * Prepare group link when an event or topic belongs to one group.
-   */
-  protected function getGroupLink($node) {
-    $group_link = NULL;
-    $group_content = \Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->loadByProperties([
-        'entity_id' => $node->id(),
-        //@TODO: fix this to work with all group types.
-        'type' => 'open_group-group_node-' . $node->getType(),
-      ]);
-    if (!empty($group_content)) {
-      $group = reset($group_content)->getGroup();
-      $group_link = $group->link();
     }
-    return $group_link;
   }
 
 }

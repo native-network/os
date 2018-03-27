@@ -51,8 +51,12 @@
   {{- dependent_locality.code ?: dependent_locality.name -}},
 {% endif %}
 
-{% if locality.code %}
-  {{ locality.code }},
+{% if locality.name %}
+  {{- locality.name -}},
+{% elseif locality.code %}
+  {{- locality.code -}},
+{% elseif locality is not iterable %}
+  {{- locality -}},
 {% endif %}
 
 {% if postal_code %}

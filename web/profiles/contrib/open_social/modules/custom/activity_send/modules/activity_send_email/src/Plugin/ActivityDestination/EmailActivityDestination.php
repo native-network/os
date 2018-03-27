@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination.
- */
-
 namespace Drupal\activity_send_email\Plugin\ActivityDestination;
 
 use Drupal\activity_send\Plugin\SendActivityDestinationBase;
@@ -16,6 +11,8 @@ use Drupal\message\Entity\Message;
  * @ActivityDestination(
  *  id = "email",
  *  label = @Translation("Email"),
+ *  isAggregatable = FALSE,
+ *  isCommon = FALSE,
  * )
  */
 class EmailActivityDestination extends SendActivityDestinationBase {
@@ -43,11 +40,21 @@ class EmailActivityDestination extends SendActivityDestinationBase {
 
   /**
    * Get field value for 'output_text' field from data array.
+   *
+   * @param \Drupal\message\Entity\Message $message
+   *   The Message object.
+   * @param string $langcode
+   *   The language in which we need to get the email text.
+   *
+   * @return string|null
+   *   If we have message text we return the text, otherwise null.
    */
-  public static function getSendEmailOutputText(Message $message) {
-    $value = NULL;
+  public static function getSendEmailOutputText(Message $message, $langcode = '') {
+    $text = NULL;
     if (isset($message)) {
-      $value = $message->getText(NULL);
+      $activity_factory = \Drupal::service('activity_creator.activity_factory');
+      $value = $activity_factory->getMessageText($message, $langcode);
+
       // Text for email.
       if (!empty($value[2])) {
         $text = $value[2];

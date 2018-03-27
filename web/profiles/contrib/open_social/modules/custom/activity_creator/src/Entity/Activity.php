@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Entity\Activity.
- */
 
 namespace Drupal\activity_creator\Entity;
 
@@ -61,14 +57,15 @@ use Drupal\user\UserInterface;
  */
 class Activity extends ContentEntityBase implements ActivityInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'user_id' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -152,21 +149,21 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
-      ))
+        ],
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -178,10 +175,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Activity entity.'))
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'language_select',
         'weight' => 10,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
@@ -204,8 +201,28 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   public function getRelatedEntityUrl() {
     $link = "";
     $related_object = $this->get('field_activity_entity')->getValue();
+
     if (!empty($related_object)) {
-      $entity = entity_load($related_object['0']['target_type'], $related_object['0']['target_id']);
+      $target_type = $related_object['0']['target_type'];
+      $target_id = $related_object['0']['target_id'];
+
+      // Make an exception for Votes.
+      if ($target_type === 'vote') {
+        /** @var \Drupal\votingapi\Entity\Vote $vote */
+        if ($vote = entity_load($target_type, $target_id)) {
+          $target_type = $vote->getVotedEntityType();
+          $target_id = $vote->getVotedEntityId();
+        }
+      }
+      elseif ($target_type === 'group_content') {
+        /** @var \Drupal\group\Entity\GroupContent $group_content */
+        if ($group_content = entity_load($target_type, $target_id)) {
+          $target_type = $group_content->getEntity()->getEntityTypeId();
+          $target_id = $group_content->getEntity()->id();
+        }
+      }
+
+      $entity = entity_load($target_type, $target_id);
       if (!empty($entity)) {
         /** @var \Drupal\Core\Url $link */
         $link = $entity->urlInfo('canonical');
@@ -220,9 +237,9 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   public function getDestinations() {
     $values = [];
     $field_activity_destinations = $this->field_activity_destinations;
-    if(isset($field_activity_destinations)){
+    if (isset($field_activity_destinations)) {
       $destinations = $field_activity_destinations->getValue();
-      foreach ($destinations as $key => $destination) {
+      foreach ($destinations as $destination) {
         $values[] = $destination['value'];
       }
     }
@@ -231,8 +248,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
 
   /**
    * Get recipient.
+   *
    * Assume that activity can't have recipient group and user at the same time.
-   * @TODO: Split it to two separate functions.
+   *
+   * @todo: Split it to two separate functions.
    */
   public function getRecipient() {
     $value = NULL;

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\image_widget_crop_examples\Tests.
- */
 
 namespace Drupal\image_widget_crop_examples\Tests;
 
@@ -25,7 +21,7 @@ class ImageWidgetCropExamplesTest extends WebTestBase {
   public static $modules = [
     'menu_ui',
     'path',
-    'media_entity',
+    'media',
   ];
 
   /**

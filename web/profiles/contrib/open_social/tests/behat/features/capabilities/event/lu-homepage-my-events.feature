@@ -1,4 +1,4 @@
-@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053
+@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053 @stability-3
 Feature: See my upcoming events
   Benefit: In order to know which events I signed up for
   Role: LU
@@ -30,7 +30,8 @@ Feature: See my upcoming events
     And I should see "My Behat Event enrolled" in the "Sidebar second"
     And I should see "Enrolled" in the "Sidebar second"
 
-    When I am at "my-events"
+    When I am at "user"
+    And I click "Events"
     Then I should see "Events for this user"
     And I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"

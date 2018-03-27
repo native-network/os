@@ -109,7 +109,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
     // Alter Group Membership table rows.
     if ($entity->getContentPlugin()->getPluginId() == 'group_membership') {
       // Prepare group roles.
-      $roles = array();
+      $roles = [];
       foreach ($entity->group_roles->referencedEntities() as $group_role) {
         $roles[] = $group_role->label();
       }
@@ -127,7 +127,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
           ->getViewBuilder('profile')
           ->view($profile, 'table');
         $row['organization']['data'] = $profile->get('field_profile_organization')
-          ->view(array('label' => 'hidden'));
+          ->view(['label' => 'hidden']);
         $row['group_role'] = $roles;
       }
     }
@@ -145,7 +145,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('There is no members yet.');
+    $build['table']['#empty'] = $this->t('There are no members yet.');
     return $build;
   }
 
@@ -161,7 +161,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
       $operations['edit']['title'] = $this->t('Edit');
     }
     if (isset($operations['delete'])) {
-      $operations['delete']['title'] = $this->t('Delete');
+      $operations['delete']['title'] = $this->t('Remove');
     }
 
     // Slap on redirect destinations for the administrative operations.
@@ -172,11 +172,11 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
 
     // Add an operation to view the actual entity.
     if ($entity->getEntity()->access('view') && $entity->getEntity()->hasLinkTemplate('canonical')) {
-      $operations['view'] = array(
+      $operations['view'] = [
         'title' => $this->t('View'),
         'weight' => 101,
         'url' => $entity->getEntity()->toUrl('canonical'),
-      );
+      ];
     }
 
     return $operations;

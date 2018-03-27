@@ -1,22 +1,16 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\image_widget_crop\Plugin\Field\FieldWidget\ImageCropWidget.
- */
-
 namespace Drupal\image_widget_crop\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\Entity\ConfigEntityStorage;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
-use Drupal\crop\Entity\Crop;
 use Drupal\image\Plugin\Field\FieldWidget\ImageWidget;
-use Drupal\image_widget_crop\Element\ImageCrop;
-use Drupal\image_widget_crop\ImageWidgetCropManager;
+use Drupal\image_widget_crop\ImageWidgetCropInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\crop\Entity\CropType;
 
@@ -34,23 +28,23 @@ use Drupal\crop\Entity\CropType;
 class ImageCropWidget extends ImageWidget {
 
   /**
-   * Instance of API ImageWidgetCropManager.
+   * Instance of ImageWidgetCropManager object.
    *
-   * @var \Drupal\image_widget_crop\ImageWidgetCropManager
+   * @var \Drupal\image_widget_crop\ImageWidgetCropInterface
    */
   protected $imageWidgetCropManager;
 
   /**
    * The image style storage.
    *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorage
+   * @var \Drupal\image\ImageStyleStorageInterface
    */
   protected $imageStyleStorage;
 
   /**
    * The crop type storage.
    *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorage
+   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
    */
   protected $cropTypeStorage;
 
@@ -69,9 +63,9 @@ class ImageCropWidget extends ImageWidget {
   /**
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ElementInfoManagerInterface $element_info, ImageWidgetCropManager $image_widget_crop_manager, ConfigEntityStorage $image_style_storage, ConfigEntityStorage $crop_type_storage, ConfigFactoryInterface $config_factory) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ElementInfoManagerInterface $element_info, ImageWidgetCropInterface $iwc_manager, EntityStorageInterface $image_style_storage, ConfigEntityStorageInterface $crop_type_storage, ConfigFactoryInterface $config_factory) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $element_info);
-    $this->imageWidgetCropManager = $image_widget_crop_manager;
+    $this->imageWidgetCropManager = $iwc_manager;
     $this->imageStyleStorage = $image_style_storage;
     $this->cropTypeStorage = $crop_type_storage;
     $this->configFactory = $config_factory;
@@ -98,7 +92,7 @@ class ImageCropWidget extends ImageWidget {
   /**
    * {@inheritdoc}
    *
-   * @return array<string,string|null|false>
+   * @return arraystringstring|null|bool
    *   The array of settings.
    */
   public static function defaultSettings() {
@@ -107,6 +101,7 @@ class ImageCropWidget extends ImageWidget {
       'crop_list' => NULL,
       'show_crop_area' => FALSE,
       'show_default_crop' => TRUE,
+      'warn_multiple_usages' => TRUE,
     ] + parent::defaultSettings();
   }
 
@@ -129,7 +124,8 @@ class ImageCropWidget extends ImageWidget {
           '#crop_type_list' => $element['#crop_list'],
           '#crop_preview_image_style' => $element['#crop_preview_image_style'],
           '#show_default_crop' => $element['#show_default_crop'],
-          '#warn_multiple_usages' => TRUE,
+          '#show_crop_area' => $element['#show_crop_area'],
+          '#warn_multiple_usages' => $element['#warn_multiple_usages'],
         ];
       }
     }
@@ -145,7 +141,7 @@ class ImageCropWidget extends ImageWidget {
    * @param array $variables
    *   An array with all existent variables for render.
    *
-   * @return array<string,array>
+   * @return arraystringarray
    *   The variables with width & height image informations.
    */
   public static function getFileImageVariables(array $element, array &$variables) {
@@ -178,7 +174,7 @@ class ImageCropWidget extends ImageWidget {
     $element['crop_preview_image_style'] = [
       '#title' => $this->t('Crop preview image style'),
       '#type' => 'select',
-      '#options' => $this->imageWidgetCropManager->getAvailableCropImageStyle(image_style_options(FALSE)),
+      '#options' => image_style_options(FALSE),
       '#default_value' => $this->getSetting('crop_preview_image_style'),
       '#description' => $this->t('The preview image will be shown while editing the content.'),
       '#weight' => 15,
@@ -208,13 +204,19 @@ class ImageCropWidget extends ImageWidget {
       '#default_value' => $this->getSetting('show_default_crop'),
     ];
 
+    $element['warn_multiple_usages'] = [
+      '#title' => $this->t('Warn the user if the crop is used more than once.'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('warn_multiple_usages'),
+    ];
+
     return $element;
   }
 
   /**
    * {@inheritdoc}
    *
-   * @return array<array>
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup[]
    *   A short summary of the widget settings.
    */
   public function settingsSummary() {
@@ -226,16 +228,18 @@ class ImageCropWidget extends ImageWidget {
 
     // Styles could be lost because of enabled/disabled modules that defines
     // their styles in code.
-    $image_style_setting = $image_styles[$this->getSetting('preview_image_style')];
+    $image_style_setting = $this->getSetting('preview_image_style');
     $crop_preview = $image_styles[$this->getSetting('crop_preview_image_style')];
     $crop_list = $this->getSetting('crop_list');
     $crop_show_button = $this->getSetting('show_crop_area');
     $show_default_crop = $this->getSetting('show_default_crop');
+    $warn_multiple_usages = $this->getSetting('warn_multiple_usages');
 
     $preview[] = $this->t('Always expand crop area: @bool', ['@bool' => ($crop_show_button) ? 'Yes' : 'No']);
     $preview[] = $this->t('Show default crop area: @bool', ['@bool' => ($show_default_crop) ? 'Yes' : 'No']);
+    $preview[] = $this->t('Warn the user if the crop is used more than once: @bool', ['@bool' => ($warn_multiple_usages) ? 'Yes' : 'No']);
 
-    if (isset($image_style_setting)) {
+    if (isset($image_styles[$image_style_setting])) {
       $preview[] = $this->t('Preview image style: @style', ['@style' => $image_style_setting]);
     }
     else {
@@ -256,7 +260,7 @@ class ImageCropWidget extends ImageWidget {
   /**
    * {@inheritdoc}
    *
-   * @return array<string,array>
+   * @return arraystringarray
    *   The form elements for a single widget for this field.
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
@@ -265,6 +269,7 @@ class ImageCropWidget extends ImageWidget {
     $element['#crop_preview_image_style'] = $this->getSetting('crop_preview_image_style');
     $element['#show_crop_area'] = $this->getSetting('show_crop_area');
     $element['#show_default_crop'] = $this->getSetting('show_default_crop');
+    $element['#warn_multiple_usages'] = $this->getSetting('warn_multiple_usages');
 
     return parent::formElement($items, $delta, $element, $form, $form_state);
   }

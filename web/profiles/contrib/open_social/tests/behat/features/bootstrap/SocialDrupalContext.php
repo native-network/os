@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Mink\Element\Element;
@@ -75,6 +76,7 @@ class SocialDrupalContext extends DrupalContext {
     // Set internal browser on the node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
+
   /**
    * @override DrupalContext:createNodes().
    *
@@ -87,7 +89,10 @@ class SocialDrupalContext extends DrupalContext {
       if (isset($node->field_event_date)) {
         $node->field_event_date = date('Y-m-d H:i:s', strtotime($node->field_event_date));
       }
-      $this->nodeCreate($node);
+      $entity = $this->nodeCreate($node);
+      if (isset($node->alias)) {
+        \Drupal::service('path.alias_storage')->save("/node/" . $entity->nid, $node->alias);
+      }
     }
   }
 
@@ -119,6 +124,19 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @Given I reset tour :tour_id
+   *
+   * @param $tour_id
+   */
+  public function iResetTour($tour_id)
+  {
+    $query = \Drupal::database()->delete('users_data');
+    $query->condition('module', 'social_tour');
+    $query->condition('name', 'social-home');
+    $query->execute();
+  }
+
+  /**
    * I wait for (seconds) seconds.
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
@@ -137,4 +155,14 @@ class SocialDrupalContext extends DrupalContext {
     $modules = [$module_name];
     \Drupal::service('module_installer')->install($modules);
   }
+
+  /**
+   * I enable the tour setting.
+   *
+   * @When I enable the tour setting
+   */
+  public function iEnableTheTourSetting() {
+    \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
+  }
+
 }

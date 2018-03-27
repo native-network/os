@@ -1,13 +1,10 @@
 <?php
 
-/**
- * @file
- * Tests for Image Widget Crop.
- */
-
 namespace Drupal\image_widget_crop\Tests;
 
+use Drupal\crop\Entity\CropType;
 use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\simpletest\WebTestBase;
 
@@ -37,7 +34,6 @@ class ImageWidgetCropTest extends WebTestBase {
     'crop',
     'image',
     'image_widget_crop',
-    'file_entity',
   ];
 
   /**
@@ -52,8 +48,6 @@ class ImageWidgetCropTest extends WebTestBase {
       'access content overview',
       'administer content types',
       'edit any crop_test content',
-      'edit any image files',
-      'administer files',
     ]);
     $this->drupalLogin($this->user);
   }
@@ -108,6 +102,7 @@ class ImageWidgetCropTest extends WebTestBase {
     $this->assertNoText('Alternative text');
     $this->assertNoFieldByName('field_image_crop_test_0_remove_button');
 
+    $image = [];
     // Upload an image in field_image_crop_test_0.
     $image['files[field_image_crop_test_0]'] = $this->container->get('file_system')->realpath('public://image-test.jpg');
     $this->drupalPostAjaxForm(NULL, $image, $this->getButtonName('//input[@type="submit" and @value="Upload" and @data-drupal-selector="edit-field-image-crop-test-0-upload-button"]'));
@@ -152,35 +147,6 @@ class ImageWidgetCropTest extends WebTestBase {
   }
 
   /**
-   * Tests integration with file_entity module.
-   */
-  public function testFileEntityIntegration() {
-    $this->createImageField('field_image_file_entity', 'crop_test', 'file_editable');
-
-    $image = current($this->drupalGetTestFiles('image'));
-    $image = File::create((array) $image);
-    $image->save();
-
-    $node_title = $this->randomMachineName();
-    $this->drupalGet('node/add/crop_test');
-    $edit = [
-      'title[0][value]' => $node_title,
-      'files[field_image_file_entity_0]' => \Drupal::service('file_system')
-        ->realpath('public://image-test.jpg'),
-    ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-
-    $node = $this->drupalGetNodeByTitle($node_title);
-
-    $this->drupalGet('node/' . $node->id() . '/edit');
-    $ajax_response = $this->drupalPostAjaxForm(NULL, [], ['file_editable_2' => t('Edit')]);
-    $this->assertTrue(preg_match('/Crop image/', $ajax_response[3]['data']), 'Cropping tool is available on inline edit.');
-
-    $this->drupalGet('file/' . $image->id() . '/edit');
-    $this->assertText('Crop image', 'Cropping tool available on file edit.');
-  }
-
-  /**
    * Gets IEF button name.
    *
    * @param string $xpath
@@ -191,6 +157,7 @@ class ImageWidgetCropTest extends WebTestBase {
    */
   protected function getButtonName($xpath) {
     $retval = '';
+
     /** @var \SimpleXMLElement[] $elements */
     if ($elements = $this->xpath($xpath)) {
       foreach ($elements[0]->attributes() as $name => $value) {
@@ -219,7 +186,7 @@ class ImageWidgetCropTest extends WebTestBase {
    * @param array $widget_settings
    *   A list of widget settings that will be added to the widget defaults.
    */
-  protected function createImageField($name, $type_name, $widget_name, $storage_settings = [], $field_settings = [], $widget_settings = []) {
+  protected function createImageField($name, $type_name, $widget_name, array $storage_settings = [], array $field_settings = [], array $widget_settings = []) {
     \Drupal::entityTypeManager()->getStorage('field_storage_config')->create([
       'field_name' => $name,
       'entity_type' => 'node',
@@ -241,10 +208,9 @@ class ImageWidgetCropTest extends WebTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('node.' . $type_name . '.default');
     $form_display->setComponent($name, [
-        'type' => $widget_name,
-        'settings' => $widget_settings,
-      ])
-      ->save();
+      'type' => $widget_name,
+      'settings' => $widget_settings,
+    ])->save();
 
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_display */
     $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('node.' . $type_name . '.default');
