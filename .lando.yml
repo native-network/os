@@ -1,4 +1,8 @@
 name: open-social
 recipe: drupal8
 config:
+  framework: drupal8
   webroot: web
+  xdebug: true
+  drush: global:8.1.15
+  php: '7.2'
