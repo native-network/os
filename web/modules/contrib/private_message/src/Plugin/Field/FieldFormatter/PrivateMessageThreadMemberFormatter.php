@@ -14,6 +14,8 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Defines the private message member field formatter.
+ *
  * @FieldFormatter(
  *   id = "private_message_thread_member_formatter",
  *   label = @Translation("Private Message Thread Members"),
@@ -25,28 +27,52 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PrivateMessageThreadMemberFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager service
+   * The entity manager service.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
-   /**
-    * The current user
-    *
-    * @var \Drupal\Core\Session\AccountProxyInterface
-    */
-   protected $currentUser;
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
 
   /**
-   * Construct a PrivateMessageThreadFormatter object
+   * Construct a PrivateMessageThreadFormatter object.
    *
+   * @param string $plugin_id
+   *   The ID of the plugin.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition.
+   * @param array $settings
+   *   The field settings.
+   * @param mixed $label
+   *   The label of the field.
+   * @param string $view_mode
+   *   The current view mode.
+   * @param array $third_party_settings
+   *   The third party settings.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
-   *   The entity manager service
+   *   The entity manager service.
    * @param |Drupal\Core\Session\AccountProxyInterface $currentUser
-   *   The current user
+   *   The current user.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, EntityManagerInterface $entityManager, AccountProxyInterface $currentUser) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    EntityManagerInterface $entityManager,
+    AccountProxyInterface $currentUser
+  ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
     $this->entityManager = $entityManager;
@@ -82,13 +108,12 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    */
   public function settingsSummary() {
     $summary = [];
-    $settings = $this->getSettings();
 
     if ($this->getSetting('display_type') == 'label') {
-      $format = t('Displays members using their username, linked to the user account if the viewer has permission to access user profiles');
+      $format = $this->t('Displays members using their username, linked to the user account if the viewer has permission to access user profiles');
     }
     elseif ($this->getSetting('display_type') == 'entity') {
-      $format = t('Displays members using the %display_mode display mode of the user entity', ['%display_mode' => $this->getSetting('entity_display_mode')]);
+      $format = $this->t('Displays members using the %display_mode display mode of the user entity', ['%display_mode' => $this->getSetting('entity_display_mode')]);
     }
 
     $summary[] = $format;
@@ -111,7 +136,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element['display_type'] = [
-      '#title' => t('Display Type'),
+      '#title' => $this->t('Display Type'),
       '#type' => 'select',
       '#options' => [
         'label' => $this->t('Label'),
@@ -129,12 +154,20 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
       '#suffix' => '</div>',
     ];
 
-   foreach ($this->entityManager->getViewModes('user') as $display_mode_id => $display_mode) {
+    foreach ($this->entityManager->getViewModes('user') as $display_mode_id => $display_mode) {
       $options[$display_mode_id] = $display_mode['label'];
     }
 
     $setting_key = 'display_type';
-    if ($value = $form_state->getValue(['fields', $this->getFieldName(), 'settings_edit_form', 'settings', $setting_key])) {
+    if ($value = $form_state->getValue(
+      [
+        'fields',
+        $this->getFieldName(),
+        'settings_edit_form',
+        'settings',
+        $setting_key,
+      ])
+    ) {
       $display_type = $value;
     }
     else {
@@ -155,7 +188,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
   }
 
   /**
-   * Ajax callback for settings form
+   * Ajax callback for settings form.
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state) {
     return $form['fields'][$this->getFieldName()]['plugin']['settings_edit_form']['settings']['entity_display_mode'];
@@ -173,20 +206,25 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $view_builder = $this->entityManager->getViewBuilder('user');
     foreach ($items as $delta => $item) {
       $user = $item->entity;
-      if ($user->id() != $this->currentUser->id()) {
-        if ($this->getSetting('display_type') == 'label') {
-          if ($access_profiles) {
-            $url = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
-            $users[$user->id()] = new FormattableMarkup('<a href=":link">@username</a>', [':link' => $url->toString(), '@username' => $user->getDisplayName()]);
+      if ($user) {
+        if ($user->id() != $this->currentUser->id()) {
+          if ($this->getSetting('display_type') == 'label') {
+            if ($access_profiles) {
+              $url = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
+              $users[$user->id()] = new FormattableMarkup('<a href=":link">@username</a>', [':link' => $url->toString(), '@username' => $user->getDisplayName()]);
+            }
+            else {
+              $users[$user->id()] = $user->getDisplayName();
+            }
           }
-          else {
-            $users[$user->id()] = $user->getDisplayName();
+          elseif ($this->getSetting('display_type') == 'entity') {
+            $renderable = $view_builder->view($user, $this->getSetting('entity_display_mode'));
+            $users[$user->id()] = render($renderable);
           }
         }
-        elseif ($this->getSetting('display_type') == 'entity') {
-          $renderable = $view_builder->view($user, $this->getSetting('entity_display_mode'));
-          $users[$user->id()] = render($renderable);
-        }
+      }
+      else {
+        $users['Missing-' . $delta] = '<em>' . $this->t('User Deleted') . '</em>';
       }
     }
 
@@ -195,13 +233,17 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $element = [
       '#prefix' => '<div class="private-message-recipients">',
       '#suffix' => '</div>',
-      '#markup' => '<span>' . t('You and ') . '</span>' . implode($separator, $users),
+      '#markup' => '<span>' . $this->t('You and') . ' </span>' . implode($separator, $users),
     ];
 
     return $element;
   }
 
+  /**
+   * Retrieve the name of the field.
+   */
   protected function getFieldName() {
     return $this->fieldDefinition->getItemDefinition()->getFieldDefinition()->getName();
   }
+
 }
