@@ -4,6 +4,5 @@ config:
   framework: drupal8
   webroot: web
   xdebug: true
-#  Breaks on newer Lando: https://github.com/lando/lando/issues/580
   drush: global:8.1.15
   php: '7.2'
