@@ -4,10 +4,13 @@ description: 'A server used for testing.'
 backend: search_api_solr
 backend_config:
   site_hash: true
+  excerpt: false
   retrieve_data: false
   highlight_data: false
   skip_schema_check: false
-  domain: generic
+  suggest_suffix: true
+  suggest_corrections: true
+  suggest_words: false
   connector: basic_auth
   connector_config:
     scheme: http

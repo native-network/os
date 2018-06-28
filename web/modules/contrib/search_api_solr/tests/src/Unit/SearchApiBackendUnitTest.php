@@ -19,7 +19,7 @@ define('DATETIME_STORAGE_TIMEZONE', 'UTC');
  *
  * @group search_api_solr
  */
-class SearchApiBackendUnitTest extends UnitTestCase {
+class SearchApiBackendUnitTest extends UnitTestCase  {
 
   use InvokeMethodTrait;
 
@@ -38,30 +38,30 @@ class SearchApiBackendUnitTest extends UnitTestCase {
    *   Expected result.
    */
   public function testIndexField($input, $type, $expected) {
+    $connector = $this->prophesize(SolrConnectorInterface::class);
+    $connector->getQueryHelper()->willReturn(new Helper());
+
     $field = 'testField';
     $document = $this->prophesize(Document::class);
     $document
       ->addField($field, $expected)
       ->shouldBeCalled();
 
+    $backend = $this->prophesize(SearchApiSolrBackend::class);
+    $backend->getSolrConnector()->willReturn($connector->reveal());
+
     $args = [
       $document->reveal(),
       $field,
       [$input],
-      $type,
+      $type
     ];
 
-    $backend = $this->prophesize(SearchApiSolrBackend::class);
     $backend_instance = $backend->reveal();
 
     // addIndexField() should convert the $input according to $type and call
     // Document::addField() with the correctly converted $input.
-    $this->invokeMethod(
-      $backend_instance,
-      'addIndexField',
-      $args,
-      ['queryHelper' => new Helper()]
-    );
+    $this->invokeMethod($backend_instance, 'addIndexField', $args);
   }
 
   /**
