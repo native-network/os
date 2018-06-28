@@ -1854,18 +1854,18 @@
     },
     {
         "name": "drupal/bootstrap",
-        "version": "3.9.0",
-        "version_normalized": "3.9.0.0",
+        "version": "3.11.0",
+        "version_normalized": "3.11.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/bootstrap",
-            "reference": "8.x-3.9"
+            "reference": "8.x-3.11"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/bootstrap-8.x-3.9.zip",
-            "reference": "8.x-3.9",
-            "shasum": "2095ebf22b147a096d34ebbc428dfb62ea01f89b"
+            "url": "https://ftp.drupal.org/files/projects/bootstrap-8.x-3.11.zip",
+            "reference": "8.x-3.11",
+            "shasum": "6ff80e37e2e1f916646300889f3392764c9cdb32"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -1876,15 +1876,15 @@
                 "dev-3.x": "3.x-dev"
             },
             "drupal": {
-                "version": "8.x-3.9",
-                "datestamp": "1519144980",
+                "version": "8.x-3.11",
+                "datestamp": "1520793438",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
                 }
             },
             "patches_applied": {
-                "Not possible to select vertical tabs menu items with keyboard": "https://www.drupal.org/files/issues/bootstrap-vertical-tabs-menu-items-accessibility-2949112-2.patch"
+                "Replace methods in Attributes.cleanClass pass the identifier as a 3rd parameter": "https://www.drupal.org/files/issues/2018-05-10/2969106-4.patch"
             }
         },
         "installation-source": "dist",
@@ -2992,21 +2992,21 @@
     },
     {
         "name": "drupal/features",
-        "version": "3.5.0",
-        "version_normalized": "3.5.0.0",
+        "version": "3.7.0",
+        "version_normalized": "3.7.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/features",
-            "reference": "8.x-3.5"
+            "reference": "8.x-3.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/features-8.x-3.5.zip",
-            "reference": "8.x-3.5",
-            "shasum": "546b34387018f9adbe742b6992c4d473f9447c41"
+            "url": "https://ftp.drupal.org/files/projects/features-8.x-3.7.zip",
+            "reference": "8.x-3.7",
+            "shasum": "1a832002f47f32a83eae789e42e4f06225de9e43"
         },
         "require": {
-            "drupal/config_update": "*",
+            "drupal/config_update": "^1.4",
             "drupal/core": "*"
         },
         "type": "drupal-module",
@@ -3015,8 +3015,8 @@
                 "dev-3.x": "3.x-dev"
             },
             "drupal": {
-                "version": "8.x-3.5",
-                "datestamp": "1519703584",
+                "version": "8.x-3.7",
+                "datestamp": "1519763284",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3058,7 +3058,7 @@
                 "homepage": "https://www.drupal.org/user/241634"
             }
         ],
-        "description": "Enables administrators to package configuration into modules.",
+        "description": "Enables administrators to package configuration into modules",
         "homepage": "https://www.drupal.org/project/features",
         "support": {
             "source": "http://cgit.drupalcode.org/features"
@@ -3906,12 +3906,18 @@
     },
     {
         "name": "drupal/r4032login",
-        "version": "dev-1.x",
-        "version_normalized": "dev-1.x",
+        "version": "1.0.0-beta2",
+        "version_normalized": "1.0.0.0-beta2",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/r4032login",
-            "reference": "722999b0d540c072ded438f33eeb2bcab37650a3"
+            "reference": "8.x-1.0-beta2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/r4032login-8.x-1.0-beta2.zip",
+            "reference": "8.x-1.0-beta2",
+            "shasum": "8a0e4ee6cd2815b50b3b6b2a62b9430cf9720d06"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -3922,11 +3928,11 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0-beta1+1-dev",
-                "datestamp": "1529070524",
+                "version": "8.x-1.0-beta2",
+                "datestamp": "1529070825",
                 "security-coverage": {
                     "status": "not-covered",
-                    "message": "Dev releases are not covered by Drupal security advisories."
+                    "message": "Beta releases are not covered by Drupal security advisories."
                 }
             }
         },
@@ -3981,6 +3987,120 @@
         "homepage": "https://www.drupal.org/project/r4032login",
         "support": {
             "source": "http://cgit.drupalcode.org/r4032login"
+        }
+    },
+    {
+        "name": "drupal/redirect",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/redirect",
+            "reference": "8.x-1.2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/redirect-8.x-1.2.zip",
+            "reference": "8.x-1.2",
+            "shasum": "ac503fbfbd15523c65f38d8b326e5f2159683cdb"
+        },
+        "require": {
+            "drupal/core": "~8"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.2",
+                "datestamp": "1525419785",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            }
+        ],
+        "description": "Allows users to redirect from old URLs to new URLs.",
+        "homepage": "https://www.drupal.org/project/redirect",
+        "support": {
+            "source": "http://cgit.drupalcode.org/redirect"
+        }
+    },
+    {
+        "name": "drupal/redis",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/redis",
+            "reference": "8.x-1.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/redis-8.x-1.0.zip",
+            "reference": "8.x-1.0",
+            "shasum": "98cf460db5c9aaacf3d5c02ac51e0c9e8e85edbb"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "suggest": {
+            "predis/predis": "^1.1.1"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0",
+                "datestamp": "1527699484",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Drupal\\redis\\": "src"
+            }
+        },
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "pounard",
+                "homepage": "https://www.drupal.org/user/240164"
+            }
+        ],
+        "description": "Provide a module placeholder, for using as dependency for module that needs Redis.",
+        "homepage": "https://www.drupal.org/project/redis",
+        "support": {
+            "source": "http://cgit.drupalcode.org/redis"
         }
     },
     {
@@ -4048,6 +4168,97 @@
         "support": {
             "source": "http://git.drupal.org/project/search_api.git",
             "issues": "https://www.drupal.org/project/issues/search_api",
+            "irc": "irc://irc.freenode.org/drupal-search-api"
+        }
+    },
+    {
+        "name": "drupal/search_api_solr",
+        "version": "2.0.0-alpha3",
+        "version_normalized": "2.0.0.0-alpha3",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/search_api_solr",
+            "reference": "8.x-2.0-alpha3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/search_api_solr-8.x-2.0-alpha3.zip",
+            "reference": "8.x-2.0-alpha3",
+            "shasum": "89723237135642363faaf272fa3421ccf0c9faea"
+        },
+        "require": {
+            "drupal/core": "*",
+            "drupal/search_api": "~1.6",
+            "maennchen/zipstream-php": "0.4.*",
+            "php": "^7.0",
+            "solarium/solarium": "~4.0.0-beta.1"
+        },
+        "conflict": {
+            "drupal/search_api_solr_multilingual": "*"
+        },
+        "require-dev": {
+            "drupal/devel": "*",
+            "drupal/facets": "1.x-dev",
+            "drupal/geofield": "1.x-dev",
+            "drupal/search_api_autocomplete": "1.x-dev",
+            "drupal/search_api_location": "1.x-dev",
+            "phayes/geophp": "^1.2"
+        },
+        "suggest": {
+            "drupal/facets": "Provides facetted search.",
+            "drupal/search_api_autocomplete": "Provides auto complete for search boxes.",
+            "drupal/search_api_location": "Provides location searches."
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-2.x": "2.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-2.0-alpha3",
+                "datestamp": "1522854184",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Alpha releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Markus Kalkbrenner",
+                "homepage": "https://www.drupal.org/u/mkalkbrenner"
+            },
+            {
+                "name": "Other contributors",
+                "homepage": "https://www.drupal.org/node/982682/committers"
+            },
+            {
+                "name": "amateescu",
+                "homepage": "https://www.drupal.org/user/729614"
+            },
+            {
+                "name": "cspitzlay",
+                "homepage": "https://www.drupal.org/user/419305"
+            },
+            {
+                "name": "drunken monkey",
+                "homepage": "https://www.drupal.org/user/205582"
+            },
+            {
+                "name": "mkalkbrenner",
+                "homepage": "https://www.drupal.org/user/124705"
+            }
+        ],
+        "description": "Offers an implementation of the Search API that uses an Apache Solr server for indexing content.",
+        "homepage": "https://www.drupal.org/project/search_api_solr",
+        "support": {
+            "source": "http://git.drupal.org/project/search_api_solr.git",
+            "issues": "https://www.drupal.org/project/issues/search_api_solr",
             "irc": "irc://irc.freenode.org/drupal-search-api"
         }
     },
@@ -4347,7 +4558,7 @@
             },
             "patches_applied": {
                 "WSOD if wrong url or network unavailable": "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch",
-                "Improve performance for embeds": "https://www.drupal.org/files/issues/caching_layer_url_embed_2867668-14.patch",
+                "Improve performance for embeds": "https://www.drupal.org/files/issues/2018-03-16/url_embed-caching-layer-2867668-17.patch",
                 "Translate dialog title": "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch"
             }
         },
@@ -4903,17 +5114,17 @@
     },
     {
         "name": "goalgorilla/open_social",
-        "version": "2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "2.1.0",
+        "version_normalized": "2.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/goalgorilla/open_social.git",
-            "reference": "0138f03bf07647bcfc194e917200f3f902157464"
+            "reference": "0a2edee5c7a32205eb5a0d818785e65eeeed8bee"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/goalgorilla/open_social/zipball/0138f03bf07647bcfc194e917200f3f902157464",
-            "reference": "0138f03bf07647bcfc194e917200f3f902157464",
+            "url": "https://api.github.com/repos/goalgorilla/open_social/zipball/0a2edee5c7a32205eb5a0d818785e65eeeed8bee",
+            "reference": "0a2edee5c7a32205eb5a0d818785e65eeeed8bee",
             "shasum": ""
         },
         "require": {
@@ -4935,9 +5146,9 @@
             "drupal/addtoany": "1.9",
             "drupal/admin_toolbar": "1.24",
             "drupal/block_field": "1.0-alpha5",
-            "drupal/bootstrap": "3.9",
+            "drupal/bootstrap": "3.11",
             "drupal/config_update": "1.5",
-            "drupal/core": "~8.5.3",
+            "drupal/core": "~8.5.4",
             "drupal/crop": "1.5",
             "drupal/csv_serialization": "1.3",
             "drupal/data_policy": "^1.0",
@@ -4946,7 +5157,7 @@
             "drupal/embed": "1.0",
             "drupal/entity": "1.0-beta3",
             "drupal/entity_reference_revisions": "1.4",
-            "drupal/features": "3.5",
+            "drupal/features": "3.7",
             "drupal/field_group": "3.0-beta1",
             "drupal/flag": "4.0-alpha2",
             "drupal/group": "1.0-rc2",
@@ -4960,7 +5171,7 @@
             "drupal/paragraphs": "1.2",
             "drupal/private_message": "1.0",
             "drupal/profile": "1.0-rc1",
-            "drupal/r4032login": "1.x-dev#4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9",
+            "drupal/r4032login": "1.0-beta2",
             "drupal/search_api": "1.6",
             "drupal/social_api": "1.1",
             "drupal/social_auth": "1.0",
@@ -4983,7 +5194,7 @@
             "php-http/message": "^1.4",
             "swiftmailer/swiftmailer": "5.4.8"
         },
-        "time": "2018-06-05T13:15:04+00:00",
+        "time": "2018-06-28T11:44:23+00:00",
         "type": "drupal-profile",
         "extra": {
             "enable-patching": true,
@@ -5001,28 +5212,28 @@
                 "drupal/group": {
                     "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
                 },
+                "drupal/image_widget_crop": {
+                    "Initial crop fix": "https://www.drupal.org/files/issues/2018-04-25/2865396-26-apply-default-crop.diff"
+                },
                 "drupal/like_and_dislike": {
                     "Fix preview on node": "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
                 },
                 "drupal/private_message": {
                     "Entity field weights": "https://www.drupal.org/files/issues/2018-05-15/set-entity-field-weights-2972948-2.patch"
                 },
-                "drupal/bootstrap": {
-                    "Not possible to select vertical tabs menu items with keyboard": "https://www.drupal.org/files/issues/bootstrap-vertical-tabs-menu-items-accessibility-2949112-2.patch"
+                "drupal/swiftmailer": {
+                    "Fix missing filter_format after update to beta2": "https://www.drupal.org/files/issues/2018-03-26/2948607-fix-filter-format-1.patch"
                 },
                 "drupal/url_embed": {
                     "WSOD if wrong url or network unavailable": "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch",
-                    "Improve performance for embeds": "https://www.drupal.org/files/issues/caching_layer_url_embed_2867668-14.patch",
+                    "Improve performance for embeds": "https://www.drupal.org/files/issues/2018-03-16/url_embed-caching-layer-2867668-17.patch",
                     "Translate dialog title": "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch"
                 },
                 "drupal/votingapi": {
                     "Delete everywhere": "https://www.drupal.org/files/issues/2018-03-29/delete-everywhere-2957067-2.patch"
                 },
-                "drupal/image_widget_crop": {
-                    "Initial crop fix": "https://www.drupal.org/files/issues/2018-04-25/2865396-26-apply-default-crop.diff"
-                },
-                "drupal/swiftmailer": {
-                    "Fix missing filter_format after update to beta2": "https://www.drupal.org/files/issues/2018-03-26/2948607-fix-filter-format-1.patch"
+                "drupal/bootstrap": {
+                    "Replace methods in Attributes.cleanClass pass the identifier as a 3rd parameter": "https://www.drupal.org/files/issues/2018-05-10/2969106-4.patch"
                 }
             }
         },
@@ -5623,6 +5834,60 @@
             "import",
             "read",
             "write"
+        ]
+    },
+    {
+        "name": "maennchen/zipstream-php",
+        "version": "v0.4.1",
+        "version_normalized": "0.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/maennchen/ZipStream-PHP.git",
+            "reference": "89e0cdb3c9ecabef4da988852003781a7802afb7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/89e0cdb3c9ecabef4da988852003781a7802afb7",
+            "reference": "89e0cdb3c9ecabef4da988852003781a7802afb7",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "php": ">= 5.6"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.3.*"
+        },
+        "time": "2016-09-13T10:29:17+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "ZipStream\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paul Duncan",
+                "email": "pabs@pablotron.org"
+            },
+            {
+                "name": "Jesse Donat",
+                "email": "donatj@gmail.com"
+            },
+            {
+                "name": "Jonatan Männchen",
+                "email": "jonatan@maennchen.ch"
+            }
+        ],
+        "description": "ZipStream is a library for dynamically streaming dynamic zip files from PHP without writing to the disk at all on the server.",
+        "keywords": [
+            "stream",
+            "zip"
         ]
     },
     {
@@ -6749,6 +7014,61 @@
             "console",
             "interactive",
             "shell"
+        ]
+    },
+    {
+        "name": "solarium/solarium",
+        "version": "4.0.0",
+        "version_normalized": "4.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/solariumphp/solarium.git",
+            "reference": "9af3e40e72b60ce372726160ceba2d46b04fd0b9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/solariumphp/solarium/zipball/9af3e40e72b60ce372726160ceba2d46b04fd0b9",
+            "reference": "9af3e40e72b60ce372726160ceba2d46b04fd0b9",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.0",
+            "symfony/event-dispatcher": "^2.7 || ^3.0 || ^4.0"
+        },
+        "require-dev": {
+            "guzzlehttp/guzzle": "^3.8 || ^6.2",
+            "phpunit/phpunit": "^6.5",
+            "satooshi/php-coveralls": "^1.0",
+            "squizlabs/php_codesniffer": "^1.4",
+            "zendframework/zendframework1": "^1.12"
+        },
+        "suggest": {
+            "minimalcode/search": "Query builder compatible with Solarium, allows simplified solr-query handling"
+        },
+        "time": "2018-05-04T14:19:29+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Solarium\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "See GitHub contributors",
+                "homepage": "https://github.com/basdenooijer/solarium/contributors"
+            }
+        ],
+        "description": "PHP Solr client",
+        "homepage": "http://www.solarium-project.org",
+        "keywords": [
+            "php",
+            "search",
+            "solr"
         ]
     },
     {
@@ -8731,17 +9051,17 @@
     },
     {
         "name": "zendframework/zend-diactoros",
-        "version": "1.7.2",
-        "version_normalized": "1.7.2.0",
+        "version": "1.8.0",
+        "version_normalized": "1.8.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-diactoros.git",
-            "reference": "741e7a571836f038de731105f4742ca8a164e43a"
+            "reference": "11c9c1835e60eef6f9234377a480fcec096ebd9e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/741e7a571836f038de731105f4742ca8a164e43a",
-            "reference": "741e7a571836f038de731105f4742ca8a164e43a",
+            "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/11c9c1835e60eef6f9234377a480fcec096ebd9e",
+            "reference": "11c9c1835e60eef6f9234377a480fcec096ebd9e",
             "shasum": ""
         },
         "require": {
@@ -8757,17 +9077,27 @@
             "phpunit/phpunit": "^5.7.16 || ^6.0.8",
             "zendframework/zend-coding-standard": "~1.0"
         },
-        "time": "2018-05-29T16:53:08+00:00",
+        "time": "2018-06-27T18:52:43+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.7.x-dev",
-                "dev-develop": "1.8.x-dev",
+                "dev-master": "1.8.x-dev",
+                "dev-develop": "1.9.x-dev",
                 "dev-release-2.0": "2.0.x-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
+            "files": [
+                "src/functions/create_uploaded_file.php",
+                "src/functions/marshal_headers_from_sapi.php",
+                "src/functions/marshal_method_from_sapi.php",
+                "src/functions/marshal_protocol_version_from_sapi.php",
+                "src/functions/marshal_uri_from_sapi.php",
+                "src/functions/normalize_server.php",
+                "src/functions/normalize_uploaded_files.php",
+                "src/functions/parse_cookie_header.php"
+            ],
             "psr-4": {
                 "Zend\\Diactoros\\": "src/"
             }
