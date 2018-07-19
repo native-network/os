@@ -2241,17 +2241,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.5.4",
-        "version_normalized": "8.5.4.0",
+        "version": "8.5.5",
+        "version_normalized": "8.5.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781"
+            "reference": "900c28f19d4b5643f43c1cf046684046402eaac4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/6b4dc1cf3347761f63152a31786b4680b8ac7781",
-            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781",
+            "url": "https://api.github.com/repos/drupal/core/zipball/900c28f19d4b5643f43c1cf046684046402eaac4",
+            "reference": "900c28f19d4b5643f43c1cf046684046402eaac4",
             "shasum": ""
         },
         "require": {
@@ -2420,7 +2420,7 @@
             "symfony/debug": "^3.4.0",
             "symfony/phpunit-bridge": "^3.4.3"
         },
-        "time": "2018-06-06T21:02:51+00:00",
+        "time": "2018-07-04T21:08:11+00:00",
         "type": "drupal-core",
         "extra": {
             "merge-plugin": {
@@ -4999,17 +4999,17 @@
     },
     {
         "name": "facebook/graph-sdk",
-        "version": "5.6.2",
-        "version_normalized": "5.6.2.0",
+        "version": "5.6.3",
+        "version_normalized": "5.6.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/facebook/php-graph-sdk.git",
-            "reference": "030f8c5b9b1a6c09e71719fd638b66ea4daa2f10"
+            "reference": "90e92bd1816fe718e55184ab85910dfcf488432c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/facebook/php-graph-sdk/zipball/030f8c5b9b1a6c09e71719fd638b66ea4daa2f10",
-            "reference": "030f8c5b9b1a6c09e71719fd638b66ea4daa2f10",
+            "url": "https://api.github.com/repos/facebook/php-graph-sdk/zipball/90e92bd1816fe718e55184ab85910dfcf488432c",
+            "reference": "90e92bd1816fe718e55184ab85910dfcf488432c",
             "shasum": ""
         },
         "require": {
@@ -5024,7 +5024,7 @@
             "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client",
             "paragonie/random_compat": "Provides a better CSPRNG option in PHP 5"
         },
-        "time": "2018-02-14T23:24:51+00:00",
+        "time": "2018-07-03T02:25:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -5305,17 +5305,17 @@
     },
     {
         "name": "google/apiclient-services",
-        "version": "v0.63",
-        "version_normalized": "0.63.0.0",
+        "version": "v0.64",
+        "version_normalized": "0.64.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/google/google-api-php-client-services.git",
-            "reference": "a009a33246e90bf1f60f745f8e47039ac5a87fdf"
+            "reference": "0250aa8cadbe58e790aa07d736b675f3bdd87a1c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/a009a33246e90bf1f60f745f8e47039ac5a87fdf",
-            "reference": "a009a33246e90bf1f60f745f8e47039ac5a87fdf",
+            "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/0250aa8cadbe58e790aa07d736b675f3bdd87a1c",
+            "reference": "0250aa8cadbe58e790aa07d736b675f3bdd87a1c",
             "shasum": ""
         },
         "require": {
@@ -5324,7 +5324,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.8"
         },
-        "time": "2018-06-07T00:22:54+00:00",
+        "time": "2018-06-30T00:22:51+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -5978,17 +5978,17 @@
     },
     {
         "name": "nikic/php-parser",
-        "version": "v4.0.2",
-        "version_normalized": "4.0.2.0",
+        "version": "v4.0.3",
+        "version_normalized": "4.0.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/nikic/PHP-Parser.git",
-            "reference": "35b8caf75e791ba1b2d24fec1552168d72692b12"
+            "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/35b8caf75e791ba1b2d24fec1552168d72692b12",
-            "reference": "35b8caf75e791ba1b2d24fec1552168d72692b12",
+            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd088dc940a418f09cda079a9b5c7c478890fb8d",
+            "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d",
             "shasum": ""
         },
         "require": {
@@ -5998,7 +5998,7 @@
         "require-dev": {
             "phpunit/phpunit": "^6.5 || ^7.0"
         },
-        "time": "2018-06-03T11:33:10+00:00",
+        "time": "2018-07-15T17:25:16+00:00",
         "bin": [
             "bin/php-parse"
         ],
@@ -6123,17 +6123,17 @@
     },
     {
         "name": "paragonie/random_compat",
-        "version": "v2.0.15",
-        "version_normalized": "2.0.15.0",
+        "version": "v2.0.17",
+        "version_normalized": "2.0.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/paragonie/random_compat.git",
-            "reference": "10bcb46e8f3d365170f6de9d05245aa066b81f09"
+            "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/10bcb46e8f3d365170f6de9d05245aa066b81f09",
-            "reference": "10bcb46e8f3d365170f6de9d05245aa066b81f09",
+            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/29af24f25bab834fcbb38ad2a69fa93b867e070d",
+            "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d",
             "shasum": ""
         },
         "require": {
@@ -6145,7 +6145,7 @@
         "suggest": {
             "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
         },
-        "time": "2018-06-08T15:26:40+00:00",
+        "time": "2018-07-04T16:31:37+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -8789,28 +8789,29 @@
     },
     {
         "name": "twig/twig",
-        "version": "v1.35.3",
-        "version_normalized": "1.35.3.0",
+        "version": "v1.35.4",
+        "version_normalized": "1.35.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/twigphp/Twig.git",
-            "reference": "b48680b6eb7d16b5025b9bfc4108d86f6b8af86f"
+            "reference": "7e081e98378a1e78c29cc9eba4aefa5d78a05d2a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/twigphp/Twig/zipball/b48680b6eb7d16b5025b9bfc4108d86f6b8af86f",
-            "reference": "b48680b6eb7d16b5025b9bfc4108d86f6b8af86f",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/7e081e98378a1e78c29cc9eba4aefa5d78a05d2a",
+            "reference": "7e081e98378a1e78c29cc9eba4aefa5d78a05d2a",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.3"
+            "php": ">=5.3.3",
+            "symfony/polyfill-ctype": "^1.8"
         },
         "require-dev": {
             "psr/container": "^1.0",
             "symfony/debug": "^2.7",
             "symfony/phpunit-bridge": "^3.3"
         },
-        "time": "2018-03-20T04:25:58+00:00",
+        "time": "2018-07-13T07:12:17+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -8844,12 +8845,12 @@
             },
             {
                 "name": "Twig Team",
-                "homepage": "http://twig.sensiolabs.org/contributors",
+                "homepage": "https://twig.symfony.com/contributors",
                 "role": "Contributors"
             }
         ],
         "description": "Twig, the flexible, fast, and secure template language for PHP",
-        "homepage": "http://twig.sensiolabs.org",
+        "homepage": "https://twig.symfony.com",
         "keywords": [
             "templating"
         ]
@@ -8995,17 +8996,17 @@
     },
     {
         "name": "zendframework/zend-diactoros",
-        "version": "1.8.0",
-        "version_normalized": "1.8.0.0",
+        "version": "1.8.1",
+        "version_normalized": "1.8.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-diactoros.git",
-            "reference": "11c9c1835e60eef6f9234377a480fcec096ebd9e"
+            "reference": "63d920d1c9ebc009d860c3666593a66298727dd6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/11c9c1835e60eef6f9234377a480fcec096ebd9e",
-            "reference": "11c9c1835e60eef6f9234377a480fcec096ebd9e",
+            "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/63d920d1c9ebc009d860c3666593a66298727dd6",
+            "reference": "63d920d1c9ebc009d860c3666593a66298727dd6",
             "shasum": ""
         },
         "require": {
@@ -9021,7 +9022,7 @@
             "phpunit/phpunit": "^5.7.16 || ^6.0.8",
             "zendframework/zend-coding-standard": "~1.0"
         },
-        "time": "2018-06-27T18:52:43+00:00",
+        "time": "2018-07-09T21:17:27+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
