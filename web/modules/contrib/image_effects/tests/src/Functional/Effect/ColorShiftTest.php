@@ -22,7 +22,7 @@ class ColorShiftTest extends ImageEffectsTestBase {
   }
 
   /**
-   * Color Shift effect test.
+   * Test effect on required toolkits.
    *
    * @param string $toolkit_id
    *   The id of the toolkit to set up.
@@ -33,9 +33,16 @@ class ColorShiftTest extends ImageEffectsTestBase {
    *
    * @dataProvider providerToolkits
    */
-  public function testColorShiftEffect($toolkit_id, $toolkit_config, array $toolkit_settings) {
+  public function testOnToolkits($toolkit_id, $toolkit_config, array $toolkit_settings) {
     $this->changeToolkit($toolkit_id, $toolkit_config, $toolkit_settings);
+  }
 
+  /**
+   * Color Shift effect test.
+   *
+   * @depends testOnToolkits
+   */
+  public function testColorShiftEffect() {
     // Test on the PNG test image.
     $original_uri = $this->getTestImageCopyUri('/files/image-test.png', 'simpletest');
 

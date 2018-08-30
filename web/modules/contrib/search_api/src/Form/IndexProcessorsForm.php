@@ -6,7 +6,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\search_api\Processor\ProcessorInterface;
@@ -18,13 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a form for configuring the processors of a search index.
  */
 class IndexProcessorsForm extends EntityForm {
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
 
   /**
    * The index being configured.
@@ -63,14 +55,11 @@ class IndexProcessorsForm extends EntityForm {
    *   The processor plugin manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ProcessorPluginManager $processor_plugin_manager, LoggerInterface $logger, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ProcessorPluginManager $processor_plugin_manager, LoggerInterface $logger) {
     $this->entityTypeManager = $entity_type_manager;
     $this->processorPluginManager = $processor_plugin_manager;
     $this->logger = $logger;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -80,9 +69,8 @@ class IndexProcessorsForm extends EntityForm {
     $entity_type_manager = $container->get('entity_type.manager');
     $processor_plugin_manager = $container->get('plugin.manager.search_api.processor');
     $logger = $container->get('logger.channel.search_api');
-    $messenger = $container->get('messenger');
 
-    return new static($entity_type_manager, $processor_plugin_manager, $logger, $messenger);
+    return new static($entity_type_manager, $processor_plugin_manager, $logger);
   }
 
   /**
@@ -334,14 +322,13 @@ class IndexProcessorsForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     if ($form_state->get('processors_changed')) {
       $save_status = parent::save($form, $form_state);
-      $this->messenger->addStatus($this->t('The indexing workflow was successfully edited.'));
+      drupal_set_message($this->t('The indexing workflow was successfully edited.'));
       if ($this->entity->isReindexing()) {
-        $url = $this->entity->toUrl();
-        $this->messenger->addStatus($this->t('All content was scheduled for <a href=":url">reindexing</a> so the new settings can take effect.', [':url' => $url->toString()]));
+        drupal_set_message($this->t('All content was scheduled for reindexing so the new settings can take effect.'));
       }
     }
     else {
-      $this->messenger->addStatus($this->t('No values were changed.'));
+      drupal_set_message($this->t('No values were changed.'));
       $save_status = SAVED_UPDATED;
     }
 

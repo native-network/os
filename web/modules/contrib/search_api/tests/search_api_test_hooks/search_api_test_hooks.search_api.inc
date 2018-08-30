@@ -70,22 +70,22 @@ function search_api_test_hooks_search_api_displays_alter(array &$displays) {
  */
 function search_api_test_hooks_search_api_index_items_alter(IndexInterface $index, array &$items) {
   unset($items['entity:node/1:en']);
-  \Drupal::messenger()->addStatus('Stormy');
+  drupal_set_message('Stormy');
 }
 
 /**
  * Implements hook_search_api_items_indexed().
  */
 function search_api_test_hooks_search_api_items_indexed(IndexInterface $index, array $item_ids) {
-  \Drupal::messenger()->addStatus('Please set me at ease');
+  drupal_set_message('Please set me at ease');
 }
 
 /**
  * Implements hook_search_api_query_alter().
  */
 function search_api_test_hooks_search_api_query_alter(QueryInterface &$query) {
-  \Drupal::messenger()->addStatus('Funky blue note');
-  \Drupal::messenger()->addStatus("Search id: {$query->getSearchId(FALSE)}");
+  drupal_set_message('Funky blue note');
+  drupal_set_message(sprintf('Search id: %s', $query->getSearchId(FALSE)));
   $query->addTag('andrew_hill');
 }
 
@@ -93,14 +93,14 @@ function search_api_test_hooks_search_api_query_alter(QueryInterface &$query) {
  * Implements hook_search_api_results_alter().
  */
 function search_api_test_hooks_search_api_results_alter(ResultSetInterface &$results) {
-  \Drupal::messenger()->addStatus('Stepping into tomorrow');
+  drupal_set_message('Stepping into tomorrow');
 }
 
 /**
  * Implements hook_search_api_index_reindex().
  */
 function search_api_test_hooks_search_api_index_reindex(IndexInterface $index, $clear = FALSE) {
-  \Drupal::messenger()->addStatus('Montara');
+  drupal_set_message('Montara');
 }
 
 /**

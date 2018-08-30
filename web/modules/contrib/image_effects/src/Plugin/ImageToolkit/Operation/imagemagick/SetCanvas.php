@@ -25,8 +25,6 @@ class SetCanvas extends ImagemagickImageToolkitOperationBase {
    * {@inheritdoc}
    */
   protected function execute(array $arguments) {
-    $toolkit_arguments = $this->getToolkit()->arguments();
-
     // Calculate geometry.
     $geometry = sprintf('%dx%d', $arguments['width'], $arguments['height']);
     if ($arguments['x_pos'] || $arguments['y_pos']) {
@@ -35,15 +33,15 @@ class SetCanvas extends ImagemagickImageToolkitOperationBase {
 
     // Determine background.
     if ($arguments['canvas_color']) {
-      $bg = '-background ' . $this->escapeArgument($arguments['canvas_color']);
+      $bg = '-background ' . $this->getToolkit()->escapeShellArg($arguments['canvas_color']);
     }
     else {
-      $format = $toolkit_arguments->getDestinationFormat() ?: $toolkit_arguments->getSourceFormat();
+      $format = $this->getToolkit()->getDestinationFormat() ?: $this->getToolkit()->getSourceFormat();
       $mime_type = $this->getFormatMapper()->getMimeTypeFromFormat($format);
       if ($mime_type === 'image/jpeg') {
         // JPEG does not allow transparency. Set to white.
         // @todo allow to be configurable.
-        $bg = '-background ' . $this->escapeArgument('#FFFFFF');
+        $bg = '-background ' . $this->getToolkit()->escapeShellArg('#FFFFFF');
       }
       else {
         $bg = '-background transparent';
@@ -51,7 +49,7 @@ class SetCanvas extends ImagemagickImageToolkitOperationBase {
     }
 
     // Add argument.
-    $this->addArgument("-gravity none {$bg} -compose src-over -extent {$geometry}");
+    $this->getToolkit()->addArgument("-gravity none {$bg} -compose src-over -extent {$geometry}");
 
     // Set dimensions.
     $this->getToolkit()

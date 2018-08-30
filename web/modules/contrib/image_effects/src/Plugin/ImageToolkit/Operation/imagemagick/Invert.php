@@ -29,7 +29,7 @@ class Invert extends ImagemagickImageToolkitOperationBase {
    * {@inheritdoc}
    */
   protected function execute(array $arguments) {
-    $this->addArgument('-negate');
+    $this->getToolkit()->addArgument('-negate');
     return TRUE;
   }
 

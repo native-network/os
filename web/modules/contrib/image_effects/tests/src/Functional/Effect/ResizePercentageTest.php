@@ -12,7 +12,7 @@ use Drupal\Tests\image_effects\Functional\ImageEffectsTestBase;
 class ResizePercentageTest extends ImageEffectsTestBase {
 
   /**
-   * Test the dimensions are resized properly.
+   * Test effect on required toolkits.
    *
    * @param string $toolkit_id
    *   The id of the toolkit to set up.
@@ -23,9 +23,16 @@ class ResizePercentageTest extends ImageEffectsTestBase {
    *
    * @dataProvider providerToolkits
    */
-  public function testResizePercentage($toolkit_id, $toolkit_config, array $toolkit_settings) {
+  public function testOnToolkits($toolkit_id, $toolkit_config, array $toolkit_settings) {
     $this->changeToolkit($toolkit_id, $toolkit_config, $toolkit_settings);
+  }
 
+  /**
+   * Test the dimensions are resized properly.
+   *
+   * @depends testOnToolkits
+   */
+  public function testResizePercentage() {
     $original_uri = $this->getTestImageCopyUri('/files/image-test.png', 'simpletest');
     $derivative_uri = $this->testImageStyle->buildUri($original_uri);
 

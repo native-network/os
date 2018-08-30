@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Plugin\views\filter;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\search_api\Entity\Index;
@@ -122,11 +123,11 @@ class SearchApiFulltext extends FilterPluginBase {
   public function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['operator']['default'] = 'and';
     $options['parse_mode'] = ['default' => 'terms'];
-    $options['min_length'] = ['default' => ''];
-    $options['fields'] = ['default' => []];
-    $options['expose']['contains']['placeholder'] = ['default' => ''];
+    $options['operator']['default'] = 'and';
+
+    $options['min_length']['default'] = '';
+    $options['fields']['default'] = [];
 
     return $options;
   }
@@ -190,21 +191,6 @@ class SearchApiFulltext extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function buildExposeForm(&$form, FormStateInterface $form_state) {
-    parent::buildExposeForm($form, $form_state);
-
-    $form['expose']['placeholder'] = [
-      '#type' => 'textfield',
-      '#default_value' => $this->options['expose']['placeholder'],
-      '#title' => $this->t('Placeholder'),
-      '#size' => 40,
-      '#description' => $this->t('Hint text that appears inside the field when empty.'),
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
 
@@ -214,9 +200,6 @@ class SearchApiFulltext extends FilterPluginBase {
       '#size' => 30,
       '#default_value' => $this->value,
     ];
-    if (!empty($this->options['expose']['placeholder'])) {
-      $form['value']['#attributes']['placeholder'] = $this->options['expose']['placeholder'];
-    }
   }
 
   /**
@@ -271,7 +254,7 @@ class SearchApiFulltext extends FilterPluginBase {
 
     $words = preg_split('/\s+/', $input);
     foreach ($words as $i => $word) {
-      if (mb_strlen($word) < $this->options['min_length']) {
+      if (Unicode::strlen($word) < $this->options['min_length']) {
         unset($words[$i]);
       }
     }
@@ -297,9 +280,6 @@ class SearchApiFulltext extends FilterPluginBase {
     $fields = $this->options['fields'];
     $fields = $fields ? $fields : array_keys($this->getFulltextFields());
     $query = $this->getQuery();
-    if ($query->shouldAbort()) {
-      return;
-    }
 
     if ($this->options['parse_mode']) {
       $parse_mode = $this->getParseModeManager()

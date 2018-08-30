@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\votingapi_test\Plugin\VoteResultFunction\Zebra.
+ */
+
 namespace Drupal\votingapi_test\Plugin\VoteResultFunction;
 
 use Drupal\votingapi\VoteResultFunctionBase;
@@ -19,5 +24,4 @@ class Zebra extends VoteResultFunctionBase {
   public function calculateResult($votes) {
     return 10101;
   }
-
 }

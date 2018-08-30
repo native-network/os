@@ -64,5 +64,4 @@ class VoteTypeListBuilder extends ConfigEntityListBuilder {
     ]);
     return $build;
   }
-
 }

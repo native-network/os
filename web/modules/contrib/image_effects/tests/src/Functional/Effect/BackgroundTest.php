@@ -22,7 +22,7 @@ class BackgroundTest extends ImageEffectsTestBase {
   }
 
   /**
-   * Background effect test.
+   * Test effect on required toolkits.
    *
    * @param string $toolkit_id
    *   The id of the toolkit to set up.
@@ -33,9 +33,16 @@ class BackgroundTest extends ImageEffectsTestBase {
    *
    * @dataProvider providerToolkits
    */
-  public function testBackgroundEffect($toolkit_id, $toolkit_config, array $toolkit_settings) {
+  public function testOnToolkits($toolkit_id, $toolkit_config, array $toolkit_settings) {
     $this->changeToolkit($toolkit_id, $toolkit_config, $toolkit_settings);
+  }
 
+  /**
+   * Background effect test.
+   *
+   * @depends testOnToolkits
+   */
+  public function testBackgroundEffect() {
     $original_uri = $this->getTestImageCopyUri('/files/image-test.png', 'simpletest');
     $background_uri = $this->getTestImageCopyUri('/files/image-1.png', 'simpletest');
 

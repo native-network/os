@@ -7,7 +7,6 @@ search_api.default_processor_configuration:
     weights:
       type: sequence
       label: 'The processor''s weights for the different processing stages'
-      orderby: key
       sequence:
         type: integer
         label: 'The processor''s weight for this stage'
@@ -22,7 +21,6 @@ search_api.fields_processor_configuration:
     fields:
       type: sequence
       label: 'The selected fields'
-      orderby: value
       sequence:
         type: string
         label: 'Selected field'
@@ -39,8 +37,7 @@ plugin.plugin_configuration.search_api_processor.hierarchy:
   mapping:
     fields:
       type: sequence
-      label: 'Fields for which to add the hierarchy, mapped to their hierarchical nested property'
-      orderby: key
+      label: 'Fields for which to add the hierarchy'
       sequence:
         type: string
         label: 'Field ID'
@@ -64,7 +61,6 @@ plugin.plugin_configuration.search_api_processor.highlight:
     exclude_fields:
       type: sequence
       label: 'Fields excluded from excerpt'
-      orderby: value
       sequence:
         type: string
         label: 'An excluded field''s ID'
@@ -88,7 +84,6 @@ plugin.plugin_configuration.search_api_processor.html_filter:
     tags:
       type: sequence
       label: 'Tag boosts'
-      orderby: key
       sequence:
         type: integer
         label: Boost
@@ -111,7 +106,6 @@ plugin.plugin_configuration.search_api_processor.ignore_character:
         character_sets:
           type: sequence
           label: 'Configuration of the character sets'
-          orderby: key
           sequence:
             type: ignore
             label: 'Character set'
@@ -123,7 +117,6 @@ plugin.plugin_configuration.search_api_processor.stemmer:
     exceptions:
       type: sequence
       label: 'Stemming exceptions'
-      orderby: key
       sequence:
         type: string
         label: Exception
@@ -138,7 +131,6 @@ plugin.plugin_configuration.search_api_processor.role_filter:
     roles:
       type: sequence
       label: 'The selected roles'
-      orderby: value
       sequence:
         type: string
         label: 'The role name'
@@ -149,8 +141,7 @@ plugin.plugin_configuration.search_api_processor.stopwords:
   mapping:
     stopwords:
       type: sequence
-      label: 'Entered stopwords'
-      orderby: value
+      label: 'entered stopwords'
       sequence:
         type: string
         label: Stopword
@@ -183,7 +174,6 @@ plugin.plugin_configuration.search_api_processor.type_boost:
     boosts:
       type: sequence
       label: 'Boost settings'
-      orderby: key
       sequence:
         type: mapping
         label: 'Datasource boost settings'
@@ -194,7 +184,6 @@ plugin.plugin_configuration.search_api_processor.type_boost:
           bundle_boosts:
             type: sequence
             label: 'Bundle-specific boosts'
-            orderby: key
             sequence:
               type: float
               label: 'The boost value for this bundle'
@@ -216,7 +205,6 @@ search_api.property_configuration.aggregated_field:
     fields:
       type: sequence
       label: 'The properties to be aggregated'
-      orderby: value
       sequence:
         type: string
         label: 'A property that should be part of the aggregation'
@@ -228,18 +216,15 @@ search_api.property_configuration.rendered_item:
     roles:
       type: sequence
       label: 'The selected roles'
-      orderby: key
       sequence:
         type: string
         label: 'The user roles which will be active when the entity is rendered'
     view_mode:
       type: sequence
       label: 'The selected view modes for each datasource, by bundle'
-      orderby: key
       sequence:
         type: sequence
         label: 'The selected view modes for the datasource, by bundle'
-        orderby: key
         sequence:
           type: string
           label: 'The view mode used to render the entity for the specified bundle'

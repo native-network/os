@@ -11,13 +11,7 @@ use Drupal\Tests\BrowserTestBase;
  */
 class SettingsFormTest extends BrowserTestBase {
 
-  public static $modules = [
-    'image_effects',
-    'jquery_colorpicker',
-    'file_mdm',
-    'file_mdm_exif',
-    'file_mdm_font',
-  ];
+  public static $modules = ['image_effects', 'jquery_colorpicker'];
 
   /**
    * {@inheritdoc}

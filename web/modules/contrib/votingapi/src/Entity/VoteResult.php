@@ -200,5 +200,4 @@ class VoteResult extends ContentEntityBase implements VoteResultInterface {
 
     return $fields;
   }
-
 }

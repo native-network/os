@@ -3,12 +3,13 @@
 namespace Drupal\image_effects\Plugin\ImageEffect;
 
 use Drupal\Core\Image\ImageInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\image\ConfigurableImageEffectBase;
-use Drupal\file_mdm\FileMetadataManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 
 /**
  * Automatically adjusts the orientation of an image resource.
@@ -29,11 +30,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AutoOrientImageEffect extends ConfigurableImageEffectBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The file metadata manager service.
+   * The MIME type guessing service.
    *
-   * @var \Drupal\file_mdm\FileMetadataManagerInterface
+   * @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface
    */
-  protected $fileMetadataManager;
+  protected $mimeTypeGuesser;
+
+  /**
+   * The file system service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
 
   /**
    * Constructs an AutoOrientImageEffect object.
@@ -46,12 +54,15 @@ class AutoOrientImageEffect extends ConfigurableImageEffectBase implements Conta
    *   The plugin implementation definition.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param \Drupal\file_mdm\FileMetadataManagerInterface $file_metadata_manager
-   *   The file metadata manager service.
+   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $mime_type_guesser
+   *   The MIME type guessing service.
+   * @param \Drupal\Core\File\FileSystemInterface $file_system
+   *   The file system service.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, LoggerInterface $logger, FileMetadataManagerInterface $file_metadata_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, LoggerInterface $logger, MimeTypeGuesserInterface $mime_type_guesser, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger);
-    $this->fileMetadataManager = $file_metadata_manager;
+    $this->mimeTypeGuesser = $mime_type_guesser;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -63,7 +74,8 @@ class AutoOrientImageEffect extends ConfigurableImageEffectBase implements Conta
       $plugin_id,
       $plugin_definition,
       $container->get('logger.factory')->get('image'),
-      $container->get('file_metadata_manager')
+      $container->get('file.mime_type.guesser'),
+      $container->get('file_system')
     );
   }
 
@@ -80,6 +92,11 @@ class AutoOrientImageEffect extends ConfigurableImageEffectBase implements Conta
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    if (!extension_loaded('exif')) {
+      // Issue a warning if the PHP EXIF extension is not enabled.
+      drupal_set_message($this->t('This image effect requires the PHP EXIF extension to be enabled to work properly.'), 'warning');
+    }
+
     $form['info'] = [
       '#type'  => 'details',
       '#title' => $this->t('Information'),
@@ -144,20 +161,30 @@ class AutoOrientImageEffect extends ConfigurableImageEffectBase implements Conta
    * {@inheritdoc}
    */
   public function transformDimensions(array &$dimensions, $uri) {
+    // Test to see if EXIF is supported by the image format.
+    $mime_type = $this->mimeTypeGuesser->guess($uri);
+    if (!in_array($mime_type, ['image/jpeg', 'image/tiff'])) {
+      // Not an EXIF enabled image, return.
+      return;
+    }
     if ($dimensions['width'] && $dimensions['height'] && $this->configuration['scan_exif']) {
       // Both dimensions in input, and effect is configured to check the
       // the input file. Read EXIF data, and determine image orientation.
-      $file = $this->fileMetadataManager->uri($uri);
-      $orientation = $file->getMetadata('exif', 'Orientation')['value'];
-      if (in_array($orientation, [5, 6, 7, 8])) {
-        $tmp = $dimensions['width'];
-        $dimensions['width'] = $dimensions['height'];
-        $dimensions['height'] = $tmp;
+      if (($file_path = $this->fileSystem->realpath($uri)) && function_exists('exif_read_data')) {
+        if ($exif_data = @exif_read_data($file_path)) {
+          $orientation = isset($exif_data['Orientation']) ? $exif_data['Orientation'] : NULL;
+          if (in_array($orientation, [5, 6, 7, 8])) {
+            $tmp = $dimensions['width'];
+            $dimensions['width'] = $dimensions['height'];
+            $dimensions['height'] = $tmp;
+          }
+          return;
+        }
       }
-      return;
     }
     // Either no full dimensions in input, or effect is configured to skip
-    // checking the input file. Set both dimensions to NULL.
+    // checking the input file, or EXIF extension is missing. Set both
+    // dimensions to NULL.
     $dimensions['width'] = $dimensions['height'] = NULL;
   }
 

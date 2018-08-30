@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\search_api\Unit\Processor;
 
-use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\search_api\processor\Stopwords;
 use Drupal\Tests\UnitTestCase;
 
@@ -93,7 +92,7 @@ class StopwordsTest extends UnitTestCase {
    * Tests the processor's preprocessSearchQuery() method.
    */
   public function testPreprocessSearchQuery() {
-    $index = $this->createMock(IndexInterface::class);
+    $index = $this->getMock('Drupal\search_api\IndexInterface');
     $index->expects($this->any())
       ->method('status')
       ->will($this->returnValue(TRUE));

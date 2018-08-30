@@ -35,5 +35,4 @@ class VoteResultStorage extends SqlContentEntityStorage implements VoteResultSto
     $vote_ids = $query->execute();
     return VoteResult::loadMultiple($vote_ids);
   }
-
 }

@@ -4,14 +4,13 @@ namespace Drupal\search_api\Form;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Utility\Error;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\PluginHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,13 +25,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * the hook's body.
  */
 class IndexForm extends EntityForm {
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
 
   /**
    * The entity type manager.
@@ -62,13 +54,10 @@ class IndexForm extends EntityForm {
    *   The entity type manager.
    * @param \Drupal\search_api\Utility\PluginHelperInterface $plugin_helper
    *   The plugin helper.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, PluginHelperInterface $plugin_helper, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, PluginHelperInterface $plugin_helper) {
     $this->entityTypeManager = $entity_type_manager;
     $this->pluginHelper = $plugin_helper;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -77,9 +66,7 @@ class IndexForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     $entity_type_manager = $container->get('entity_type.manager');
     $plugin_helper = $container->get('search_api.plugin_helper');
-    $messenger = $container->get('messenger');
-
-    return new static($entity_type_manager, $plugin_helper, $messenger);
+    return new static($entity_type_manager, $plugin_helper);
   }
 
   /**
@@ -371,7 +358,7 @@ class IndexForm extends EntityForm {
     // If the user changed the datasources and there is at least one datasource
     // config form, show a message telling the user to configure it.
     if ($selected_datasources && $show_message) {
-      $this->messenger->addWarning($this->t('Please configure the used datasources.'));
+      drupal_set_message($this->t('Please configure the used datasources.'), 'warning');
     }
   }
 
@@ -395,7 +382,7 @@ class IndexForm extends EntityForm {
       // Only notify the user of a missing tracker plugin if we're editing an
       // existing index.
       elseif (!$index->isNew()) {
-        $this->messenger->addError($this->t('The tracker plugin is missing or invalid.'));
+        drupal_set_message($this->t('The tracker plugin is missing or invalid.'), 'error');
       }
     }
     else {
@@ -425,7 +412,7 @@ class IndexForm extends EntityForm {
       // If the user changed the tracker and the new one has a config form, show
       // a message telling the user to configure it.
       if ($selected_tracker && $selected_tracker != $tracker->getPluginId()) {
-        $this->messenger->addWarning($this->t('Please configure the used tracker.'));
+        drupal_set_message($this->t('Please configure the used tracker.'), 'warning');
       }
     }
   }
@@ -611,7 +598,7 @@ class IndexForm extends EntityForm {
         /** @var \Drupal\search_api\IndexInterface $index */
         $index = $this->getEntity();
         $index->save();
-        $this->messenger->addStatus($this->t('The index was successfully saved.'));
+        drupal_set_message($this->t('The index was successfully saved.'));
         $button = $form_state->getTriggeringElement();
         if (!empty($button['#redirect_to_url'])) {
           $form_state->setRedirectUrl($index->toUrl($button['#redirect_to_url']));
@@ -620,14 +607,14 @@ class IndexForm extends EntityForm {
           $form_state->setRedirect('entity.search_api_index.canonical', ['search_api_index' => $index->id()]);
         }
       }
-      catch (EntityStorageException $e) {
+      catch (SearchApiException $e) {
         $form_state->setRebuild();
 
         $message = '%type: @message in %function (line %line of %file).';
         $variables = Error::decodeException($e);
         $this->getLogger('search_api')->error($message, $variables);
 
-        $this->messenger->addError($this->t('The index could not be saved.'));
+        drupal_set_message($this->t('The index could not be saved.'), 'error');
       }
     }
   }

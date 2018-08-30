@@ -104,5 +104,4 @@ interface VoteInterface extends ContentEntityInterface, EntityOwnerInterface {
    *   The called vote entity.
    */
   public function setSource($source);
-
 }

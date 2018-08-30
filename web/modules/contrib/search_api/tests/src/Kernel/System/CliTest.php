@@ -7,7 +7,6 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Utility\Utility;
-use Drupal\Tests\search_api\Kernel\PostRequestIndexingTrait;
 
 /**
  * Tests Search API functionality when executed in the CLI.
@@ -15,8 +14,6 @@ use Drupal\Tests\search_api\Kernel\PostRequestIndexingTrait;
  * @group search_api
  */
 class CliTest extends KernelTestBase {
-
-  use PostRequestIndexingTrait;
 
   /**
    * The search server used for testing.
@@ -126,15 +123,7 @@ class CliTest extends KernelTestBase {
     $indexed_items = $index->getTrackerInstance()->getIndexedItemsCount();
 
     $this->assertEquals(4, $total_items, 'All 4 items are tracked.');
-    $this->assertEquals(0, $indexed_items, 'No items are indexed.');
-
-    $this->triggerPostRequestIndexing();
-
-    $total_items = $index->getTrackerInstance()->getTotalItemsCount();
-    $indexed_items = $index->getTrackerInstance()->getIndexedItemsCount();
-
-    $this->assertEquals(4, $total_items, 'All 4 items are tracked.');
-    $this->assertEquals(2, $indexed_items, '2 items are indexed.');
+    $this->assertEquals(2, $indexed_items, '2 items are indexed');
   }
 
 }

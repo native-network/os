@@ -241,8 +241,7 @@ function hook_search_api_index_items_alter(\Drupal\search_api\IndexInterface $in
     '%index' => $index->label(),
     '@ids' => implode(', ', array_keys($items)),
   ];
-  $message = t('Indexing items on index %index with the following IDs: @ids', $arguments);
-  \Drupal::messenger()->addStatus($message);
+  drupal_set_message(t('Indexing items on index %index with the following IDs: @ids', $arguments));
 }
 
 /**
@@ -258,8 +257,7 @@ function hook_search_api_items_indexed(\Drupal\search_api\IndexInterface $index,
     // Note that this is just an example, and would only work if there are only
     // nodes indexed in that index (and even then the printed IDs would probably
     // not be as expected).
-    $message = t('Nodes indexed: @ids.', implode(', ', $item_ids));
-    \Drupal::messenger()->addStatus($message);
+    drupal_set_message(t('Nodes indexed: @ids.', implode(', ', $item_ids)));
   }
 }
 

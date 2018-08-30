@@ -7,23 +7,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
 use Drupal\search_api\SearchApiException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a confirm form for clearing an index.
  */
 class IndexClearConfirmForm extends EntityConfirmFormBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    $form = parent::create($container);
-
-    $form->setMessenger($container->get('messenger'));
-
-    return $form;
-  }
 
   /**
    * {@inheritdoc}
@@ -55,11 +43,9 @@ class IndexClearConfirmForm extends EntityConfirmFormBase {
 
     try {
       $index->clear();
-      $this->messenger()
-        ->addStatus($this->t('All items were successfully deleted from search index %name.', ['%name' => $index->label()]));
     }
     catch (SearchApiException $e) {
-      $this->messenger->addError($this->t('Failed to clear the search index %name.', ['%name' => $index->label()]));
+      drupal_set_message($this->t('Failed to clear the search index %name.', ['%name' => $index->label()]), 'error');
       $message = '%type while trying to clear the index %name: @message in %function (line %line of %file)';
       $variables = [
         '%name' => $index->label(),

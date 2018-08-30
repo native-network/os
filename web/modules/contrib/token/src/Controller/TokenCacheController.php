@@ -14,7 +14,7 @@ class TokenCacheController extends ControllerBase  {
    */
   public function flush() {
     token_clear_cache();
-    $this->messenger()->addMessage($this->t('Token registry caches cleared.'));
+    drupal_set_message(t('Token registry caches cleared.'));
     return $this->redirect('<front>');
   }
 

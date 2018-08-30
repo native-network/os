@@ -34,10 +34,15 @@ class AutoOrient extends GDImageToolkitOperationBase {
       return TRUE;
     }
 
+    // Will not work without EXIF extension installed.
+    if (!function_exists('exif_read_data')) {
+      $this->logger->notice('The image %file could not be auto-rotated because the exif_read_data() function is not available in this PHP installation. Check if the PHP EXIF extension is enabled.', ['%file' => $this->getToolkit()->getSource()]);
+      return FALSE;
+    }
+
     // Read EXIF data.
-    $file = \Drupal::service('file_metadata_manager')->uri($source_path);
-    $orientation = $file->getMetadata('exif', 'Orientation')['value'];
-    if ($orientation !== NULL) {
+    $exif = @exif_read_data(\Drupal::service('file_system')->realpath($source_path));
+    if (isset($exif['Orientation'])) {
       // http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html:
       // 1 = Horizontal (normal)                 [top-left].
       // 2 = Mirror horizontal                   [top-right].
@@ -47,7 +52,7 @@ class AutoOrient extends GDImageToolkitOperationBase {
       // 6 = Rotate 90 CW                        [right-top].
       // 7 = Mirror horizontal and rotate 90 CW  [right-bottom].
       // 8 = Rotate 270 CW                       [left-bottom].
-      switch ($orientation) {
+      switch ($exif['Orientation']) {
         case 2:
           return $this->getToolkit()->apply('mirror', ['x_axis' => TRUE]);
 

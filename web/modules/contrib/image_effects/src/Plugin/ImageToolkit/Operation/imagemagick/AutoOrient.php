@@ -29,7 +29,7 @@ class AutoOrient extends ImagemagickImageToolkitOperationBase {
    * {@inheritdoc}
    */
   protected function execute(array $arguments) {
-    $this->addArgument('-auto-orient');
+    $this->getToolkit()->addArgument('-auto-orient');
     // Swap toolkit's height and width when picture orientation is vertical.
     if (in_array($this->getToolkit()->getExifOrientation(), [5, 6, 7, 8])) {
       $tmp = $this->getToolkit()->getWidth();

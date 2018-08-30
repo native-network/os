@@ -25,5 +25,4 @@ class Sum extends VoteResultFunctionBase {
     }
     return $total;
   }
-
 }

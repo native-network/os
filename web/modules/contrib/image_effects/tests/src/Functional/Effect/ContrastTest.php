@@ -22,7 +22,7 @@ class ContrastTest extends ImageEffectsTestBase {
   }
 
   /**
-   * Contrast effect test.
+   * Test effect on required toolkits.
    *
    * @param string $toolkit_id
    *   The id of the toolkit to set up.
@@ -33,9 +33,16 @@ class ContrastTest extends ImageEffectsTestBase {
    *
    * @dataProvider providerToolkits
    */
-  public function testContrastEffect($toolkit_id, $toolkit_config, array $toolkit_settings) {
+  public function testOnToolkits($toolkit_id, $toolkit_config, array $toolkit_settings) {
     $this->changeToolkit($toolkit_id, $toolkit_config, $toolkit_settings);
+  }
 
+  /**
+   * Contrast effect test.
+   *
+   * @depends testOnToolkits
+   */
+  public function testContrastEffect() {
     // Test on the PNG test image.
     $original_uri = $this->getTestImageCopyUri('/files/image-test.png', 'simpletest');
 
@@ -74,7 +81,7 @@ class ContrastTest extends ImageEffectsTestBase {
           $this->transparent,
           $this->grey,
         ],
-        'tolerance' => 16000,
+        'tolerance' => 4,
       ],
 
       // Adjust contrast by 50%.

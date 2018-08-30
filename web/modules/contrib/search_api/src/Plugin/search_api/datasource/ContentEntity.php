@@ -455,8 +455,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         '#type' => 'radios',
         '#title' => $this->t('Which bundles should be indexed?'),
         '#options' => [
-          0 => $this->t('Only those selected'),
           1 => $this->t('All except those selected'),
+          0 => $this->t('None except those selected'),
         ],
         '#default_value' => (int) $this->configuration['bundles']['default'],
       ];
@@ -480,8 +480,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         '#type' => 'radios',
         '#title' => $this->t('Which languages should be indexed?'),
         '#options' => [
-          0 => $this->t('Only those selected'),
           1 => $this->t('All except those selected'),
+          0 => $this->t('None except those selected'),
         ],
         '#default_value' => (int) $this->configuration['languages']['default'],
       ];
@@ -809,8 +809,12 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
    * {@inheritdoc}
    */
   public function getViewModes($bundle = NULL) {
-    return $this->getEntityDisplayRepository()
-      ->getViewModeOptions($this->getEntityTypeId());
+    if (isset($bundle) && $this->hasBundles()) {
+      return $this->getEntityDisplayRepository()->getViewModeOptionsByBundle($this->getEntityTypeId(), $bundle);
+    }
+    else {
+      return $this->getEntityDisplayRepository()->getViewModeOptions($this->getEntityTypeId());
+    }
   }
 
   /**
@@ -837,8 +841,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
    */
   public function viewMultipleItems(array $items, $view_mode, $langcode = NULL) {
     try {
-      $view_builder = $this->getEntityTypeManager()
-        ->getViewBuilder($this->getEntityTypeId());
+      $view_builder = $this->getEntityTypeManager()->getViewBuilder($this->getEntityTypeId());
       // Langcode passed, use that for viewing.
       if (isset($langcode)) {
         $entities = [];
@@ -855,8 +858,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
       // Otherwise, separate the items by language, keeping the keys.
       $items_by_language = [];
       foreach ($items as $i => $item) {
-        if ($entity = $this->getEntity($item)) {
-          $items_by_language[$entity->language()->getId()][$i] = $entity;
+        if ($item instanceof EntityInterface) {
+          $items_by_language[$item->language()->getId()][$i] = $item;
         }
       }
       // Then build the items for each language. We initialize $build beforehand
@@ -966,7 +969,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
     $indexes = Index::loadMultiple();
 
     foreach ($indexes as $index_id => $index) {
-      // Filter out indexes that don't contain the datasource in question.
+      // Filter our indexes that don't contain the datasource in question.
       if (!$index->isValidDatasource($datasource_id)) {
         unset($indexes[$index_id]);
       }
@@ -974,7 +977,9 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         // If the entity type supports bundles, we also have to filter out
         // indexes that exclude the entity's bundle.
         $config = $index->getDatasource($datasource_id)->getConfiguration();
-        if (!Utility::matches($entity_bundle, $config['bundles'])) {
+        $default = !empty($config['bundles']['default']);
+        $bundle_set = in_array($entity_bundle, $config['bundles']['selected']);
+        if ($default == $bundle_set) {
           unset($indexes[$index_id]);
         }
       }
@@ -1012,6 +1017,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
     if (!isset($config['languages']['selected'])) {
       return $item_ids;
     }
+    $default = !empty($config['languages']['default']);
+    $selected = $config['languages']['selected'];
     $always_valid = [
       LanguageInterface::LANGCODE_NOT_SPECIFIED,
       LanguageInterface::LANGCODE_NOT_APPLICABLE,
@@ -1024,7 +1031,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         continue;
       }
       $langcode = substr($item_id, $pos + 1);
-      if (Utility::matches($langcode, $config['languages'])
+      if ($default != in_array($langcode, $selected)
           || in_array($langcode, $always_valid)) {
         $valid_ids[] = $item_id;
       }

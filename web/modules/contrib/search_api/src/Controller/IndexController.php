@@ -7,7 +7,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\SearchApiException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,13 +26,6 @@ class IndexController extends ControllerBase {
   protected $requestStack;
 
   /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface|null
-   */
-  protected $messenger;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -41,7 +33,6 @@ class IndexController extends ControllerBase {
     $controller = parent::create($container);
 
     $controller->setRequestStack($container->get('request_stack'));
-    $controller->setMessenger($container->get('messenger'));
 
     return $controller;
   }
@@ -76,29 +67,6 @@ class IndexController extends ControllerBase {
    */
   public function setRequestStack(RequestStack $request_stack) {
     $this->requestStack = $request_stack;
-    return $this;
-  }
-
-  /**
-   * Retrieves the messenger.
-   *
-   * @return \Drupal\Core\Messenger\MessengerInterface
-   *   The messenger.
-   */
-  public function getMessenger() {
-    return $this->messenger ?: \Drupal::service('messenger');
-  }
-
-  /**
-   * Sets the messenger.
-   *
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The new messenger.
-   *
-   * @return $this
-   */
-  public function setMessenger(MessengerInterface $messenger) {
-    $this->messenger = $messenger;
     return $this;
   }
 
@@ -157,11 +125,11 @@ class IndexController extends ControllerBase {
     // enabled if its server is not set or disabled.
     if ($search_api_index->status()) {
       // Notify the user about the status change.
-      $this->getMessenger()->addStatus($this->t('The search index %name has been enabled.', ['%name' => $search_api_index->label()]));
+      drupal_set_message($this->t('The search index %name has been enabled.', ['%name' => $search_api_index->label()]));
     }
     else {
       // Notify the user that the status change did not succeed.
-      $this->getMessenger()->addStatus($this->t('The search index %name could not be enabled. Check if its server is set and enabled.', ['%name' => $search_api_index->label()]));
+      drupal_set_message($this->t('The search index %name could not be enabled. Check if its server is set and enabled.', ['%name' => $search_api_index->label()]));
     }
 
     // Redirect to the index's "View" page.
@@ -194,7 +162,7 @@ class IndexController extends ControllerBase {
       }
       catch (SearchApiException $e) {
         $args['%field'] = $fields[$field_id]->getLabel();
-        $this->getMessenger()->addError($this->t('The field %field is locked and cannot be removed.', $args));
+        drupal_set_message($this->t('The field %field is locked and cannot be removed.', $args), 'error');
       }
     }
     else {

@@ -25,5 +25,4 @@ class Average extends VoteResultFunctionBase {
     }
     return ($total / count($votes));
   }
-
 }

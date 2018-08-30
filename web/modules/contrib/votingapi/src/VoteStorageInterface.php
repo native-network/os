@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 interface VoteStorageInterface extends EntityStorageInterface {
 
   /**
-   * Get votes for a user.
+   * Get votes for a user
    *
    * @param $uid
    * @param string $vote_type_id
@@ -21,10 +21,10 @@ interface VoteStorageInterface extends EntityStorageInterface {
    *
    * @return mixed
    */
-  public function getUserVotes($uid, $vote_type_id = NULL, $entity_type_id = NULL, $entity_id = NULL, $vote_source = NULL);
+  function getUserVotes($uid, $vote_type_id = NULL, $entity_type_id = NULL, $entity_id = NULL, $vote_source = NULL);
 
   /**
-   * Delete votes for a user.
+   * Delete votes for a user
    *
    * @param $uid
    * @param string $vote_type_id
@@ -35,7 +35,7 @@ interface VoteStorageInterface extends EntityStorageInterface {
    *
    * @return mixed
    */
-  public function deleteUserVotes($uid, $vote_type_id = NULL, $entity_type_id = NULL, $entity_id = NULL, $vote_source = NULL);
+  function deleteUserVotes($uid, $vote_type_id = NULL, $entity_type_id = NULL, $entity_id = NULL, $vote_source = NULL);
 
   /**
    * The default vote source.
@@ -45,21 +45,20 @@ interface VoteStorageInterface extends EntityStorageInterface {
    * @return string
    *   The $vote_source parameter or, if it is NULL, the default vote source.
    */
-  public static function defaultVoteSource($vote_source = NULL);
+  static function defaultVoteSource($vote_source = NULL);
 
   /**
-   * Get votes since a determined moment.
+   * Get votes since a determined moment
    *
    * @return mixed
    */
-  public function getVotesSinceMoment();
+  function getVotesSinceMoment();
 
   /**
    * @param $entity_type_id
    * @param $entity_id
    *
-   * @return bool
+   * @return boolean
    */
-  public function deleteVotesForDeletedEntity($entity_type_id, $entity_id);
-
+  function deleteVotesForDeletedEntity($entity_type_id, $entity_id);
 }
