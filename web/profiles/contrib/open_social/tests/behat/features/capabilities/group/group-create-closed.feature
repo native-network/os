@@ -76,8 +76,8 @@ Feature: Create Closed Group
   # Lets add another user on the Manage members tab.
     When I click "Test closed group"
     And I click "Manage members"
-    And I click "Add member"
-    And I fill in "Group User Two" for "Select a member"
+    And I click "Add members"
+    And I fill in "Group User Two" for "Select members to add"
     And I press "Save"
     Then I click "Members"
     And I should see "Group User Two"
@@ -156,7 +156,7 @@ Feature: Create Closed Group
     And I should see the button "Delete"
     And I press "Delete"
     And I wait for AJAX to finish
-    Then I should see "Your group and all of it's topic's, event's and post's have been deleted."
+    Then I should see "Your group and all of its topics, events and posts have been deleted."
     When I am on "user"
     And I click "Groups"
     Then I should not see "Test closed group"
