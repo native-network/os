@@ -793,9 +793,10 @@ function _filter_html_image_secure_process($text) {
     // Verify that $src starts with $base_path.
     // This also ensures that external images cannot be referenced.
     $src = $image->getAttribute('src');
-    if (mb_strlen($src, 0, $private_path_length) === $private_path) {
+    if (mb_substr($src, 0, $private_path_length) === $private_path) {
       $private_image_path = mb_substr($src, $private_path_length);
       $private_image_path = 'private://' . $private_image_path;
+      $private_image_path = urldecode($private_image_path);
       $image_object = \Drupal::service('image.factory')->get($private_image_path);
       if ($image_object->getFileSize()) {
         // The image has the right path. Erroneous images are dealt with below.
@@ -810,7 +811,7 @@ function _filter_html_image_secure_process($text) {
       $local_image_path = rawurldecode($local_image_path);
 
       // Check for query string and remove it if present.
-      $parse_query_string = mb_substr($local_image_path, 0, strpos($local_image_path, '?'));
+      $parse_query_string = substr($local_image_path, 0, strpos($local_image_path, '?'));
       if (!empty($parse_query_string)) {
         $local_image_path = $parse_query_string;
       }
