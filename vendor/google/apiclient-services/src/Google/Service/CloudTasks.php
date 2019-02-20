@@ -48,6 +48,7 @@ class Google_Service_CloudTasks extends Google_Service
     parent::__construct($client);
     $this->rootUrl = 'https://cloudtasks.googleapis.com/';
     $this->servicePath = '';
+    $this->batchPath = 'batch';
     $this->version = 'v2beta3';
     $this->serviceName = 'cloudtasks';
 
