@@ -123,8 +123,7 @@ class Google_Service_Compute_Resource_Instances extends Google_Service_Resource
    * @param array $optParams Optional parameters.
    *
    * @opt_param bool forceAttach Whether to force attach the disk even if it's
-   * currently attached to another instance. This is only available for regional
-   * disks.
+   * currently attached to another instance.
    * @opt_param string requestId An optional request ID to identify requests.
    * Specify a unique request ID so that if you must retry your request, the
    * server will know to ignore the request if it has already been completed.
@@ -439,7 +438,7 @@ class Google_Service_Compute_Resource_Instances extends Google_Service_Resource
     return $this->call('listReferrers', array($params), "Google_Service_Compute_InstanceListReferrers");
   }
   /**
-   * Performs a reset on the instance. This is a hard reset; the VM does not do a
+   * Performs a reset on the instance. This is a hard reset the VM does not do a
    * graceful shutdown. For more information, see Resetting an instance.
    * (instances.reset)
    *

@@ -30,7 +30,7 @@
  */
 class Google_Service_Oauth2 extends Google_Service
 {
-  /** Know the list of people in your circles, your age range, and language. */
+  /** View your basic profile info, including your age range and language. */
   const PLUS_LOGIN =
       "https://www.googleapis.com/auth/plus.login";
   /** Know who you are on Google. */
@@ -39,7 +39,7 @@ class Google_Service_Oauth2 extends Google_Service
   /** View your email address. */
   const USERINFO_EMAIL =
       "https://www.googleapis.com/auth/userinfo.email";
-  /** View your basic profile info. */
+  /** See your personal info, including any personal info you've made publically available. */
   const USERINFO_PROFILE =
       "https://www.googleapis.com/auth/userinfo.profile";
 
