@@ -79,6 +79,7 @@ return array(
     'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
     'Facebook\\' => array($vendorDir . '/facebook/graph-sdk/src/Facebook'),
     'Embed\\' => array($vendorDir . '/embed/embed/src'),
+    'Drush\\' => array($vendorDir . '/drush/drush/src'),
     'Drupal\\social\\Behat\\' => array($baseDir . '/web/profiles/contrib/open_social/tests/behat/features/bootstrap'),
     'Drupal\\redis\\' => array($baseDir . '/web/modules/contrib/redis/src'),
     'Drupal\\Driver\\' => array($baseDir . '/web/drivers/lib/Drupal/Driver'),

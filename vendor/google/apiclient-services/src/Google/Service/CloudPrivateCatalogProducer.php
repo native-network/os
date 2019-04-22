@@ -279,10 +279,6 @@ class Google_Service_CloudPrivateCatalogProducer extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
-                'filter' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                ),
                 'pageToken' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -290,6 +286,10 @@ class Google_Service_CloudPrivateCatalogProducer extends Google_Service
                 'pageSize' => array(
                   'location' => 'query',
                   'type' => 'integer',
+                ),
+                'filter' => array(
+                  'location' => 'query',
+                  'type' => 'string',
                 ),
               ),
             ),'patch' => array(
