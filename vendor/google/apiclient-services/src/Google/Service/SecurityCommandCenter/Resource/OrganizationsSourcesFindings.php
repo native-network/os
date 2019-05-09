@@ -145,10 +145,11 @@ class Google_Service_SecurityCommandCenter_Resource_OrganizationsSourcesFindings
    * * string literals in quotes. * integer literals without quotes. * boolean
    * literals `true` and `false` without quotes.
    *
-   * The following field and operator combinations are supported: name | `=`
-   * parent | '=', ':' resource_name | '=', ':' state | '=', ':' category | '=',
-   * ':' external_uri | '=', ':' event_time | `>`, `<`, `>=`, `<=` security_marks
-   * | '=', ':' source_properties | '=', ':', `>`, `<`, `>=`, `<=`
+   * The following field and operator combinations are supported:
+   *
+   * name: `=` parent: `=`, `:` resource_name: `=`, `:` state: `=`, `:` category:
+   * `=`, `:` external_uri: `=`, `:` event_time: `>`, `<`, `>=`, `<=`
+   * security_marks: `=`, `:` source_properties: `=`, `:`, `>`, `<`, `>=`, `<=`
    *
    * For example, `source_properties.size = 100` is a valid filter string.
    * @return Google_Service_SecurityCommandCenter_ListFindingsResponse

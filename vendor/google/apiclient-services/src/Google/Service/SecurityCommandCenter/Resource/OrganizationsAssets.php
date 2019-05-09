@@ -48,6 +48,48 @@ class Google_Service_SecurityCommandCenter_Resource_OrganizationsAssets extends 
    * format is "organizations/[organization_id]".
    * @param array $optParams Optional parameters.
    *
+   * @opt_param string filter Expression that defines the filter to apply across
+   * assets. The expression is a list of zero or more restrictions combined via
+   * logical operators `AND` and `OR`. Parentheses are supported, and `OR` has
+   * higher precedence than `AND`.
+   *
+   * Restrictions have the form `  ` and may have a `-` character in front of them
+   * to indicate negation. The fields map to those defined in the Asset resource.
+   * Examples include:
+   *
+   * * name * security_center_properties.resource_name *
+   * resource_properties.a_property * security_marks.marks.marka
+   *
+   * The supported operators are:
+   *
+   * * `=` for all value types. * `>`, `<`, `>=`, `<=` for integer values. * `:`,
+   * meaning substring matching, for strings.
+   *
+   * The supported value types are:
+   *
+   * * string literals in quotes. * integer literals without quotes. * boolean
+   * literals `true` and `false` without quotes.
+   *
+   * The following are the allowed field and operator combinations:
+   *
+   * * name: `=` * update_time: `>`, `<`, `>=`, `<=` * iam_policy.policy_blob:
+   * `=`, `:` * resource_properties: `=`, `:`, `>`, `<`, `>=`, `<=` *
+   * security_marks: `=`, `:` * security_center_properties.resource_name: `=`, `:`
+   * * security_center_properties.resource_type: `=`, `:` *
+   * security_center_properties.resource_parent: `=`, `:` *
+   * security_center_properties.resource_project: `=`, `:` *
+   * security_center_properties.resource_owners: `=`, `:`
+   *
+   * For example, `resource_properties.size = 100` is a valid filter string.
+   * @opt_param string fieldMask Optional.
+   *
+   * A field mask to specify the ListAssetsResult fields to be listed in the
+   * response. An empty field mask will list all fields.
+   * @opt_param string pageToken The value returned by the last
+   * `ListAssetsResponse`; indicates that this is a continuation of a prior
+   * `ListAssets` call, and that the system should return the next page of data.
+   * @opt_param int pageSize The maximum number of results to return in a single
+   * response. Default is 10, minimum is 1, maximum is 1000.
    * @opt_param string orderBy Expression that defines what fields and order to
    * use for sorting. The string value should follow SQL syntax: comma separated
    * list of fields. For example: "name,resource_properties.a_property". The
@@ -89,47 +131,6 @@ class Google_Service_SecurityCommandCenter_Resource_OrganizationsAssets extends 
    * If compare_duration is not specified, then the only possible state_change is
    * "UNUSED",  which will be the state_change set for all assets present at
    * read_time.
-   * @opt_param string filter Expression that defines the filter to apply across
-   * assets. The expression is a list of zero or more restrictions combined via
-   * logical operators `AND` and `OR`. Parentheses are supported, and `OR` has
-   * higher precedence than `AND`.
-   *
-   * Restrictions have the form `  ` and may have a `-` character in front of them
-   * to indicate negation. The fields map to those defined in the Asset resource.
-   * Examples include:
-   *
-   * * name * security_center_properties.resource_name *
-   * resource_properties.a_property * security_marks.marks.marka
-   *
-   * The supported operators are:
-   *
-   * * `=` for all value types. * `>`, `<`, `>=`, `<=` for integer values. * `:`,
-   * meaning substring matching, for strings.
-   *
-   * The supported value types are:
-   *
-   * * string literals in quotes. * integer literals without quotes. * boolean
-   * literals `true` and `false` without quotes.
-   *
-   * The following are the allowed field and operator combinations: name | `=`
-   * update_time | `>`, `<`, `>=`, `<=` iam_policy.policy_blob | '=', ':'
-   * resource_properties | '=', ':', `>`, `<`, `>=`, `<=` security_marks | '=',
-   * ':' security_center_properties.resource_name | '=', ':'
-   * security_center_properties.resource_type | '=', ':'
-   * security_center_properties.resource_parent | '=', ':'
-   * security_center_properties.resource_project | '=', ':'
-   * security_center_properties.resource_owners | '=', ':'
-   *
-   * For example, `resource_properties.size = 100` is a valid filter string.
-   * @opt_param string fieldMask Optional.
-   *
-   * A field mask to specify the ListAssetsResult fields to be listed in the
-   * response. An empty field mask will list all fields.
-   * @opt_param string pageToken The value returned by the last
-   * `ListAssetsResponse`; indicates that this is a continuation of a prior
-   * `ListAssets` call, and that the system should return the next page of data.
-   * @opt_param int pageSize The maximum number of results to return in a single
-   * response. Default is 10, minimum is 1, maximum is 1000.
    * @return Google_Service_SecurityCommandCenter_ListAssetsResponse
    */
   public function listOrganizationsAssets($parent, $optParams = array())
