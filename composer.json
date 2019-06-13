@@ -1,6 +1,6 @@
 {
-  "name": "pantheon-systems/example-drops-8-composer",
-  "description": "Install drops-8 with Composer on Pantheon.",
+  "name": "native-network/example-open-social-composer",
+  "description": "Install Open Social with Composer on Pantheon.",
   "type": "project",
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
