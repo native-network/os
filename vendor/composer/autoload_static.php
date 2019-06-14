@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit57ad773981852f05b1434260f683f202
+class ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -112,6 +112,7 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'Prophecy\\' => 9,
             'PhpParser\\' => 10,
         ),
         'O' => 
@@ -125,7 +126,10 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         ),
         'L' => 
         array (
+            'League\\OAuth2\\Server\\' => 21,
+            'League\\Event\\' => 13,
             'League\\Csv\\' => 11,
+            'Lcobucci\\JWT\\' => 13,
         ),
         'J' => 
         array (
@@ -182,6 +186,7 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
+            'Defuse\\Crypto\\' => 14,
         ),
         'C' => 
         array (
@@ -405,6 +410,10 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
+        'Prophecy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
+        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
@@ -421,9 +430,21 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
         ),
+        'League\\OAuth2\\Server\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/oauth2-server/src',
+        ),
+        'League\\Event\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/event/src',
+        ),
         'League\\Csv\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/csv/src',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'JakubOnderka\\PhpConsoleHighlighter\\' => 
         array (
@@ -567,6 +588,10 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
+        'Defuse\\Crypto\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/defuse/php-encryption/src',
+        ),
         'Consolidation\\OutputFormatters\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/output-formatters/src',
@@ -624,7 +649,7 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         array (
             'org\\bovigo\\vfs\\' => 
             array (
-                0 => __DIR__ . '/..' . '/mikey179/vfsStream/src/main/php',
+                0 => __DIR__ . '/..' . '/mikey179/vfsstream/src/main/php',
             ),
         ),
         'W' => 
@@ -654,10 +679,6 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
         ),
         'P' => 
         array (
-            'Prophecy\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
-            ),
             'PEAR' => 
             array (
                 0 => __DIR__ . '/..' . '/pear/pear_exception',
@@ -1245,11 +1266,11 @@ class ComposerStaticInit57ad773981852f05b1434260f683f202
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit57ad773981852f05b1434260f683f202::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit57ad773981852f05b1434260f683f202::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit57ad773981852f05b1434260f683f202::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit57ad773981852f05b1434260f683f202::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit57ad773981852f05b1434260f683f202::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit22a41688b0cf2c9616c36e6d61bb8e31::$classMap;
 
         }, null, ClassLoader::class);
     }
