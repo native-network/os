@@ -17,22 +17,24 @@
   },
   "require": {
     "composer/installers": "^1.0.20",
-    "drupal-composer/drupal-scaffold": "^2.5.0",
     "cweagans/composer-patches": "^1.0",
-    "drupal/console": "^1",
-    "drush/drush": "~8",
-    "drupal/address": "^1.4",
-    "goalgorilla/open_social": "dev-8.x-6.x",
+    "drupal-composer/drupal-scaffold": "^2.5.0",
     "doctrine/cache": "1.6.1",
     "doctrine/collections": "1.4.0",
     "doctrine/common": "2.7.2",
     "doctrine/inflector": "1.1.0",
+    "drupal/address": "^1.4",
+    "drupal/console": "^1",
     "drupal/redirect": "^1.1",
     "drupal/redis": "^1.0",
     "drupal/search_api_solr": "^1.0",
+    "drupal/social_api": "^2.0",
+    "drupal/social_auth": "^2.0",
+    "drush/drush": "~8",
+    "goalgorilla/open_social": "dev-8.x-6.x",
+    "lsolesen/pel": "0.9.6",
     "native-network/social_json_api": "^2.0",
-    "phenx/php-font-lib": "^0.5",
-    "lsolesen/pel": "0.9.6"
+    "phenx/php-font-lib": "^0.5"
   },
   "repositories": [
     {
