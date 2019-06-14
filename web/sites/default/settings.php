@@ -38,3 +38,19 @@ if (file_exists($local_settings)) {
  * See: tests/installer-features/installer.feature
  */
 $settings['install_profile'] = 'social';
+
+// Lando
+$lando_info = json_decode(getenv('LANDO_INFO'), TRUE);
+if (!empty($lando_info)) {
+  $databases['default']['default'] = array (
+    'database' => 'drupal8',
+    'username' => 'drupal8',
+    'password' => 'drupal8',
+    'prefix' => '',
+    'host' => 'database',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+  );
+  $settings['hash_salt'] = 'mRhT3f2JD2ZdgKxJTrfjkU_inQJcjCzS6mgI07Spw5SegCzvOZdnvgjsqIzQc_GaeRLNkRMsYA';
+}
