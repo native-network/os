@@ -52,5 +52,4 @@ if (!empty($lando_info)) {
     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
     'driver' => 'mysql',
   );
-  $settings['hash_salt'] = 'mRhT3f2JD2ZdgKxJTrfjkU_inQJcjCzS6mgI07Spw5SegCzvOZdnvgjsqIzQc_GaeRLNkRMsYA';
 }
