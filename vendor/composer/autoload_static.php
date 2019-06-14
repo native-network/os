@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
+class ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -126,11 +126,8 @@ class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
         ),
         'L' => 
         array (
-            'League\\OAuth2\\Server\\' => 21,
             'League\\OAuth2\\Client\\' => 21,
-            'League\\Event\\' => 13,
             'League\\Csv\\' => 11,
-            'Lcobucci\\JWT\\' => 13,
         ),
         'J' => 
         array (
@@ -187,7 +184,6 @@ class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
-            'Defuse\\Crypto\\' => 14,
         ),
         'C' => 
         array (
@@ -431,25 +427,13 @@ class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
         ),
-        'League\\OAuth2\\Server\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/oauth2-server/src',
-        ),
         'League\\OAuth2\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/oauth2-client/src',
         ),
-        'League\\Event\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/event/src',
-        ),
         'League\\Csv\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/csv/src',
-        ),
-        'Lcobucci\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'JakubOnderka\\PhpConsoleHighlighter\\' => 
         array (
@@ -592,10 +576,6 @@ class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
         'Doctrine\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
-        ),
-        'Defuse\\Crypto\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/defuse/php-encryption/src',
         ),
         'Consolidation\\OutputFormatters\\' => 
         array (
@@ -1271,11 +1251,11 @@ class ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitaa89c5c1c0dfcd1c2d10eca22e80e1ac::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit542ea0ac9e9349101e00a7896aa526e7::$classMap;
 
         }, null, ClassLoader::class);
     }
