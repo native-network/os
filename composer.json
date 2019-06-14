@@ -31,7 +31,7 @@
     "drush/drush": "~8",
     "goalgorilla/open_social": "dev-8.x-6.x",
     "lsolesen/pel": "0.9.6",
-    "native-network/social_json_api": "^2.0",
+    "native-network/social_json_api": "dev-no-oauth",
     "phenx/php-font-lib": "^0.5"
   },
   "repositories": [
