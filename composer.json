@@ -29,8 +29,8 @@
     "drupal/redis": "^1.0",
     "drupal/search_api_solr": "^1.0",
     "drush/drush": "~8",
-    "goalgorilla/open_social": "dev-8.x-6.x",
     "lsolesen/pel": "0.9.6",
+    "native-network/open_social": "dev-native-8.x-6.x",
     "native-network/social_json_api": "dev-no-oauth",
     "phenx/php-font-lib": "^0.5"
   },
@@ -42,10 +42,6 @@
     {
       "type": "composer",
       "url": "https://asset-packagist.org"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/native-network/open_social"
     }
   ],
   "require-dev": {
