@@ -98,7 +98,7 @@ final class AssetPackagist {
     // Get root folder based on the location of Drupal core. If we do it in this
     // way we can also support projects that have
     //    $package['extra']['installer-paths']['']
-    $root_path = 'web/';
+    $root_path = 'html/';
     foreach ($package['extra']['installer-paths'] as $path => $install_type) {
       if (in_array('drupal/core', $install_type, TRUE)) {
         // If Drupal core is installed in the root path we also want the

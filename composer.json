@@ -28,8 +28,6 @@
     "drupal/redirect": "^1.1",
     "drupal/redis": "^1.0",
     "drupal/search_api_solr": "^1.0",
-    "drupal/social_api": "^2.0",
-    "drupal/social_auth": "^2.0",
     "drush/drush": "~8",
     "goalgorilla/open_social": "dev-8.x-6.x",
     "lsolesen/pel": "0.9.6",
@@ -47,7 +45,7 @@
     },
     {
       "type": "vcs",
-      "url": "https://github.com/goalgorilla/open_social"
+      "url": "https://github.com/native-network/open_social"
     }
   ],
   "require-dev": {
