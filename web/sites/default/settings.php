@@ -43,9 +43,9 @@ $settings['install_profile'] = 'social';
 $lando_info = json_decode(getenv('LANDO_INFO'), TRUE);
 if (!empty($lando_info)) {
   $databases['default']['default'] = array (
-    'database' => 'drupal8',
-    'username' => 'drupal8',
-    'password' => 'drupal8',
+    'database' => 'pantheon',
+    'username' => 'pantheon',
+    'password' => 'pantheon',
     'prefix' => '',
     'host' => 'database',
     'port' => '3306',

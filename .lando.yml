@@ -1,7 +1,6 @@
 name: open-social
-recipe: drupal8
+recipe: pantheon
 config:
   framework: drupal8
   webroot: web
-  xdebug: true
-  php: '7.3'
+  xdebug: false
