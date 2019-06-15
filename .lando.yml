@@ -1,6 +1,8 @@
-name: open-social
+name: native-os
 recipe: pantheon
 config:
   framework: drupal8
   webroot: web
   xdebug: false
+  site: native-os
+  id: 90cf9ace-225b-4ba9-8464-6bd180511595
